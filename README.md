@@ -47,3 +47,6 @@
 - Login page: This page would allow staff members to log in to the system with their email and password, allowing them to access the pages appropriate to their role.
 
 - Home page: This page would provide a summary of the different sections of the website and allow users to navigate to the pages they need
+
+# ERD
+![images](https://github.com/wintercarbon/book/blob/main/erd%20latest.jpg)
