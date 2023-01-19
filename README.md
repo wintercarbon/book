@@ -49,3 +49,10 @@
 
 # ERD
 ![images](https://github.com/wintercarbon/book/blob/main/erd%20latest.jpg)
+
+
+# how to
+- how to import sql
+1)  create schema "PROJECT502" dulu (ikut dlam notes lab 11)
+2) make the connection
+3) import data (try follow https://www.youtube.com/watch?v=xO5HLHocHxw )
