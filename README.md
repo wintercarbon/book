@@ -1,5 +1,5 @@
 # book
- project302
+ project302 (oracle as DBMS)
 
 # dir
 
