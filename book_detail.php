@@ -210,8 +210,8 @@ if ($staffpos == 'Manager') {
                                     $detail_supplier_name = "N/A";
                                     $detail_quantity = "N/A";
                                     $detail_url = "";
-                                    if(!is_null($detail)) {
-                                        foreach($detail as $details) {
+                                    if (!is_null($detail)) {
+                                        foreach ($detail as $details) {
                                             $detail_bookid = $details['BOOKID'];
                                             $detail_isbn = $details['ISBN'];
                                             $detail_book_name = $details['BOOK_NAME'];
@@ -274,6 +274,18 @@ if ($staffpos == 'Manager') {
                                             echo "<h6>$detail_quantity</h6>";
                                             ?>
                                         </li>
+                                        <?php
+                                        if($isManager) {
+                                            echo "<li>";
+                                            echo "<h4>Action</h4>";
+                                            echo "<h6>";
+                                            // edit and delete button
+                                            echo "<a href='book_edit.php?bookid=$detail_bookid' class='btn btn-primary'>Edit</a>";
+                                            echo "<a href='book_delete.php?bookid=$detail_bookid' class='btn btn-danger'>Delete</a>";
+                                            echo "</h6>";
+                                            echo "</li>";
+                                        }
+                                        ?>
                                     </ul>
                                 </div>
                             </div>
