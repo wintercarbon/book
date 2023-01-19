@@ -260,7 +260,7 @@ if ($staffpos == 'Manager') {
                                         echo "<td>".$details['PUBLICATION_DATE']."</td>";
                                         echo "<td>".$details['SUPPLIER_NAME']."</td>";
                                         echo "<td>".$details['QUANTITY']."</td>";
-                                        echo "<td><a href='book_detail.php?book_id=".$details['BOOKID'] . "'><img src='assets/img/icons/EYE.svg' alt='img'></a><a href='book_edit.php?book_id=".$details['BOOKID']."'><img src='assets/img/icons/edit.svg' alt='img'></a><a href='book_delete.php?book_id=".$details['BOOKID']."'><img src='assets/img/icons/delete.svg' alt='img'></a></td>";
+                                        echo "<td><a href='book_detail.php?bookid=".$details['BOOKID'] . "'><img src='assets/img/icons/EYE.svg' alt='img'></a><a href='book_edit.php?bookid=".$details['BOOKID']."'><img src='assets/img/icons/edit.svg' alt='img'></a><a href='book_delete.php?bookid=".$details['BOOKID']."'><img src='assets/img/icons/delete.svg' alt='img'></a></td>";
                                         }
                                     }
                                     ?>

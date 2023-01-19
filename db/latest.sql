@@ -1,5 +1,5 @@
 --------------------------------------------------------
---  File created - Wednesday-January-18-2023   
+--  File created - Thursday-January-19-2023   
 --------------------------------------------------------
 --------------------------------------------------------
 --  DDL for Table BOOK
@@ -261,31 +261,31 @@ Insert into PROJECT502.SUPPLIER (SUPPLIER_ID,SUPPLIER_NAME,SUPPLIER_ADDRESS,CONT
 --  Ref Constraints for Table BOOK
 --------------------------------------------------------
 
-  ALTER TABLE "PROJECT502"."BOOK" ADD FOREIGN KEY ("SUPPLIER_ID")
-	  REFERENCES "PROJECT502"."SUPPLIER" ("SUPPLIER_ID") ENABLE;
+  ALTER TABLE "PROJECT502"."BOOK" ADD CONSTRAINT "SUPPLIER_ID_FK_DC" FOREIGN KEY ("SUPPLIER_ID")
+	  REFERENCES "PROJECT502"."SUPPLIER" ("SUPPLIER_ID") ON DELETE CASCADE ENABLE;
 --------------------------------------------------------
 --  Ref Constraints for Table INV_BOOK
 --------------------------------------------------------
 
-  ALTER TABLE "PROJECT502"."INV_BOOK" ADD FOREIGN KEY ("INVID")
-	  REFERENCES "PROJECT502"."INVENTORY" ("INVID") ENABLE;
-  ALTER TABLE "PROJECT502"."INV_BOOK" ADD FOREIGN KEY ("BOOKID")
-	  REFERENCES "PROJECT502"."BOOK" ("BOOKID") ENABLE;
+  ALTER TABLE "PROJECT502"."INV_BOOK" ADD CONSTRAINT "BOOKID_PK_CD" FOREIGN KEY ("BOOKID")
+	  REFERENCES "PROJECT502"."BOOK" ("BOOKID") ON DELETE CASCADE ENABLE;
+  ALTER TABLE "PROJECT502"."INV_BOOK" ADD CONSTRAINT "INVID_PK_CD" FOREIGN KEY ("INVID")
+	  REFERENCES "PROJECT502"."INVENTORY" ("INVID") ON DELETE CASCADE ENABLE;
 --------------------------------------------------------
 --  Ref Constraints for Table INVENTORY
 --------------------------------------------------------
 
-  ALTER TABLE "PROJECT502"."INVENTORY" ADD FOREIGN KEY ("STAFFID")
-	  REFERENCES "PROJECT502"."STAFF" ("STAFFID") ENABLE;
+  ALTER TABLE "PROJECT502"."INVENTORY" ADD CONSTRAINT "STAFFID_FK_DC" FOREIGN KEY ("STAFFID")
+	  REFERENCES "PROJECT502"."STAFF" ("STAFFID") ON DELETE CASCADE ENABLE;
 --------------------------------------------------------
 --  Ref Constraints for Table MANAGER
 --------------------------------------------------------
 
-  ALTER TABLE "PROJECT502"."MANAGER" ADD FOREIGN KEY ("STAFFID")
-	  REFERENCES "PROJECT502"."STAFF" ("STAFFID") ENABLE;
+  ALTER TABLE "PROJECT502"."MANAGER" ADD CONSTRAINT "STAFFID_M_FK_DC" FOREIGN KEY ("STAFFID")
+	  REFERENCES "PROJECT502"."STAFF" ("STAFFID") ON DELETE CASCADE ENABLE;
 --------------------------------------------------------
 --  Ref Constraints for Table STAFF
 --------------------------------------------------------
 
-  ALTER TABLE "PROJECT502"."STAFF" ADD CONSTRAINT "SUPERVISOR_ID_FK" FOREIGN KEY ("SUPERVISOR_ID")
-	  REFERENCES "PROJECT502"."STAFF" ("STAFFID") ENABLE;
+  ALTER TABLE "PROJECT502"."STAFF" ADD CONSTRAINT "SUPERVISOR_ID_FK" FOREIGN KEY ("STAFFID")
+	  REFERENCES "PROJECT502"."STAFF" ("STAFFID") ON DELETE CASCADE ENABLE;

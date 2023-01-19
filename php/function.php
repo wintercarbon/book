@@ -296,6 +296,24 @@ class BOOK extends Connection {
         }
         return $data;
     }
+
+    // get book details by bookid
+    public function getBookDetails($bookid) {
+        $data = array();
+        $sql = "SELECT b.bookid, b.isbn, b.book_name, b.book_author, b.book_price, b.publication_date, s.supplier_name, ib.quantity, b.image_url
+        FROM inv_book ib
+        JOIN Book b ON ib.bookid = b.bookid
+        JOIN Supplier s ON b.supplier_id = s.supplier_id
+        WHERE b.bookid = :bookid";
+        $stmt = oci_parse($this->conn, $sql);
+        oci_bind_by_name($stmt, ':bookid', $bookid);
+        oci_execute($stmt);
+        while ($row = oci_fetch_array($stmt, OCI_ASSOC)) {
+            $data[] = $row;
+        }
+        return $data;
+    }
+
 }
 
 ?>
