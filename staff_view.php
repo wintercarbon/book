@@ -245,11 +245,7 @@ if ($staffpos == 'Manager') {
                                         <th>Email</th>
                                         <th>Position</th>
                                         <th>Supervisor</th>
-                                        <?php
-                                        if($isManager) {
-                                            echo "<th>Action</th>";
-                                        }
-                                        ?>
+                                        <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -258,7 +254,7 @@ if ($staffpos == 'Manager') {
                                     // get all staff details
                                 $STAFFDETAIL = $staff->getAllStaff();
                                 if (is_null($STAFFDETAIL)) {
-                                    echo "No frequently purchased books.";
+                                    echo "No staff.";
                                 } else {
                                     foreach ($STAFFDETAIL as $STAFFDETAILS) {
                                         if(isset($STAFFDETAILS['SUPERVISOR_ID'])) {
@@ -275,9 +271,11 @@ if ($staffpos == 'Manager') {
                                         echo "<td>" . $STAFFDETAILS['EMAIL'] . "</td>";
                                         echo "<td>" . $STAFFDETAILS['POSITION'] . "</td>";
                                         echo "<td>" . $supervisorName . "</td>";
+                                        echo "<td><a class='me-3' href='staff_details.php?staffid=" . $STAFFDETAILS['STAFFID'] . "'><img src='assets/img/icons/eye.svg' alt='img'></a>";
                                         if ($isManager) {
-                                            echo "<td><a class='me-3' href='editproduct.php'><img src='assets/img/icons/edit.svg' alt='img'></a><a class='me-3' href='product-details.php'><img src='assets/img/icons/eye.svg' alt='img'></a></td>";
+                                            echo "<a class='me-3' href='editproduct.php'><img src='assets/img/icons/edit.svg' alt='img'></a>";
                                         }
+                                        echo "</td>";
                                         echo "</tr>";
                                     }
                                 }

@@ -2,6 +2,8 @@
 
 session_start();
 
+// get supplier_id from url
+$supplier_id = $_GET['supplier_id'];
 
 // check if user is logged in
 if (!isset($_SESSION['staffid'])) {
@@ -27,44 +29,60 @@ if ($staffpos == 'Manager') {
 }
 
 // check not manager go to dashboard
-/*
 if (!$isManager) {
     header('Location: dashboard.php');
-} */
-
+}
 
 ?>
 <?php
-// add
-if (isset($_POST['add'])) {
 
-    // addInventory($staffid) // automate this :/ to today.
-    // addInvBook($invid, $bookid, $quantity, $purchase_price)
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update'])) {
+    $supplier_id = $_POST['supplier_id'];
+    $supplier_name = $_POST['supplier_name'];
+    $supplier_address = $_POST['supplier_address'];
+    $contact_person = $_POST['contact_person'];
+    $phone_number = $_POST['phone_number'];
 
-    $post_staffid = $_POST['staffid'];
-    // inventory_add.php - button to create invid
-    // push to be 
-
-    if($result = $inventory->addInventory($post_staffid)) {
-        $newinvid = $inventory->getInvIdSeqCurrval();
-        $post_invid = $newinvid;
-        $post_bookid = $_POST['bookid'];
-        $post_quantity = $_POST['quantity'];
-        $post_purchase_price = $_POST['purchase_price'];
-
-        $result = $inventory->addInvBook($post_invid, $post_bookid, $post_quantity, $post_purchase_price);
-        if ($result) {
-            echo '<script>alert("Add inventory successfully")</script>';
-            echo '<script>window.location.href = "inventory_edit.php?INVID='. $post_invid . '&bookid="</script>';
-        } else {
-            echo '<script>alert("Add inventory failed")</script>';
-            echo '<script>window.location.href = "inventory_add.php"</script>';
-        }
+    if($result = $supplier->updateSupplier($supplier_id, $supplier_name, $supplier_address, $contact_person, $phone_number)) {
+        
+        echo "<script>alert('Supplier update successfully!');</script>";
     } else {
-        echo '<script>alert("Add inventory failed")</script>';
-        echo '<script>window.location.href = "inventory_add.php"</script>';
+        echo "<script>alert('Supplier update failed!');</script>";
     }
+}
 
+// delete
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete'])) {
+    $supplier_id = $_POST['supplier_id'];
+    if($result = $supplier->deleteSupplier($supplier_id)) {
+        echo "<script>alert('Supplier deleted successfully!');</script>";
+        echo '<script>window.location.href = "supplier_view.php"</script>';
+    } else {
+        echo "<script>alert('Supplier delete failed!');</script>";
+    }
+}
+?>
+
+<?php
+
+// 
+
+$supplier_id = $_GET['supplier_id'];
+
+$detail = $supplier->getSupplierDetailsForUpdate($supplier_id);
+$detail_supplier_id = "N/A";
+$detail_supplier_name = "N/A";
+$detail_suppplier_address = "N/A";
+$detail_contact_person= "N/A";
+$detail_phone_number = "N/A";
+
+if (!is_null($detail)) {
+    foreach ($detail as $details) {
+        $detail_supplier_id = $details['SUPPLIER_ID'];
+        $detail_supplier_name = $details['SUPPLIER_NAME'];
+        $detail_supplier_address = $details['SUPPLIER_ADDRESS'];
+        $detail_contact_person = $details['CONTACT_PERSON'];
+        $detail_phone_number = $details['PHONE_NUMBER'];
 }
 ?>
 
@@ -221,8 +239,8 @@ if (isset($_POST['add'])) {
             <div class="content">
                 <div class="page-header">
                     <div class="page-title">
-                        <h4>Product Edit</h4>
-                        <h6>Update your product</h6>
+                        <h4>Supplier Edit</h4>
+                        <h6>Update Supplier</h6>
                     </div>
                 </div>
 
@@ -230,22 +248,58 @@ if (isset($_POST['add'])) {
                     <div class="card-body">
                         <div class="row">
                             <form class="my-3"
-                                action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>"
+                                action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]) . "?bookid=" . $bookid; ?>"
                                 method="POST">
                                 <div class="col-lg-3 col-sm-6 col-12">
                                     <div class="form-group">
-                                        <input type="number" name="staffid" value="<?php echo $staffid; ?>" hidden>
-                                        <label>Book Id</label>
+                                        <input type="number" name="bookid" value="<?php echo $detail_bookid; ?>" hidden>
+                                        <label>Supplier ID</label>
+                                        <input type="number" value="<?php echo $detail_supplier_id; ?>" disabled>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-sm-6 col-12">
+                                    <div class="form-group">
+                                        <label>Supplier Name</label>
+                                        <input type="text" name="supplier_name" value="<?php echo $detail_supplier_name; ?>">
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-sm-6 col-12">
+                                    <div class="form-group">
+                                        <label>Supplier Address</label>
+                                        <input type="text" name="supplier_address" value="<?php echo $detail_supplier_address; ?>">
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-sm-6 col-12">
+                                    <div class="form-group">
+                                        <label>Contact Person</label>
+                                        <input type="text" name="contact_person" value="<?php echo $detail_contact_person; ?>">
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-sm-6 col-12">
+                                    <div class="form-group">
+                                        <label>Phone Number</label>
+                                        <input type="number" name="phone_number"
+                                            value="<?php echo $detail_phone_number; ?>">
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-sm-6 col-12">
+                                    <div class="form-group">
+                                        <label>Image URL</label>
+                                        <input type="text" name="book_image" value="<?php echo $detail_url; ?>">
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-sm-6 col-12">
+                                    <div class="form-group">
+                                        <label>Supplier</label>
                                         <?php
-                                        $allbook = $book->getAllUniqueBook();
-                                        
-                                        if(!is_null($allbook)) {
-                                            echo "<select name='bookid'>";
-                                            foreach($allbook as $allbooks) {
-                                                if($allbooks['BOOKID'] == $allbooks) {
-                                                    echo "<option value='" . $allbooks['BOOKID'] . "' selected>" . $allbooks['BOOK_NAME'] . "</option>";
+                                        $getAllSupplier = $supplier->getAllSupplierIDName();
+                                        if(!is_null($getAllSupplier)) {
+                                            echo "<select name='supplierid'>";
+                                            foreach($getAllSupplier as $getAllSuppliers) {
+                                                if($getAllSuppliers['SUPPLIER_ID'] == $detail_supplierid) {
+                                                    echo "<option value='" . $getAllSuppliers['SUPPLIER_ID'] . "' selected>" . $getAllSuppliers['SUPPLIER_NAME'] . "</option>";
                                                 } else {
-                                                    echo "<option value='" . $allbooks['BOOKID'] . "'>" . $allbooks['BOOK_NAME'] . "</option>";
+                                                    echo "<option value='" . $getAllSuppliers['SUPPLIER_ID'] . "'>" . $getAllSuppliers['SUPPLIER_NAME'] . "</option>";
                                                 }
                                             }
                                             echo "</select>";
@@ -253,23 +307,16 @@ if (isset($_POST['add'])) {
                                         ?>
                                     </div>
                                 </div>
-                                <div class="col-lg-3 col-sm-6 col-12">
-                                    <div class="form-group">
-                                        <label>Prchase Price</label>
-                                        <input type="number" name="purchase_price" value="">
-                                    </div>
-                                </div>
-                                <div class="col-lg-3 col-sm-6 col-12">
-                                    <div class="form-group">
-                                        <label>Quantity</label>
-                                        <input type="number" name="quantity" value="">
-                                    </div>
-                                </div>
                                 <div class="col-lg-12">
-                                    <input type="submit" name="add" value="add" class="btn btn-submit me-2">
-                                    <a href="inventory_view.php" class="btn btn-cancel">Cancel</a>
+                                    <input type="submit" name="update" value="update" class="btn btn-submit me-2">
+                                    <a href="book_view.php" class="btn btn-cancel">Cancel</a>
                                 </div>
                         </div>
+                        </form>
+                        <form class="border-bottom" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]) . "?bookid=" . $bookid; ?>" method="POST" id="deleteForm" onsubmit="return confirm('Are you sure you want to delete the book?');">
+                            <input type="number" name="bookid" value="<?php echo $detail_bookid; ?>" hidden>
+                            <input type="hidden" name="delete" value="delete">
+                            <input type="submit" name="delete" value="Delete" class="btn btn-danger">
                         </form>
                     </div>
                 </div>

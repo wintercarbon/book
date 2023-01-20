@@ -2,9 +2,11 @@
 
 session_start();
 
+// get supplier_id from url
+$supplier_id = $_GET['supplier_id'];
 
 // check if user is logged in
-if (!isset($_SESSION['staffid'])) {
+if(!isset($_SESSION['staffid'])){
     header('Location: index.php');
 }
 
@@ -14,57 +16,15 @@ $staffid = $_SESSION['staffid'];
 
 $inventory = new Inventory();
 $staff = new Staff();
-$book = new BOOK();
-$supplier = new Supplier();
+$book = new Book();
 $staffname = $staff->getStaffFullName($staffid);
 $staffpos = $staff->getStaffPosition($staffid);
 
 // is manager
-if ($staffpos == 'Manager') {
+if($staffpos = 'Manager'){
     $isManager = true;
-} else {
+}else {
     $isManager = false;
-}
-
-// check not manager go to dashboard
-/*
-if (!$isManager) {
-    header('Location: dashboard.php');
-} */
-
-
-?>
-<?php
-// add
-if (isset($_POST['add'])) {
-
-    // addInventory($staffid) // automate this :/ to today.
-    // addInvBook($invid, $bookid, $quantity, $purchase_price)
-
-    $post_staffid = $_POST['staffid'];
-    // inventory_add.php - button to create invid
-    // push to be 
-
-    if($result = $inventory->addInventory($post_staffid)) {
-        $newinvid = $inventory->getInvIdSeqCurrval();
-        $post_invid = $newinvid;
-        $post_bookid = $_POST['bookid'];
-        $post_quantity = $_POST['quantity'];
-        $post_purchase_price = $_POST['purchase_price'];
-
-        $result = $inventory->addInvBook($post_invid, $post_bookid, $post_quantity, $post_purchase_price);
-        if ($result) {
-            echo '<script>alert("Add inventory successfully")</script>';
-            echo '<script>window.location.href = "inventory_edit.php?INVID='. $post_invid . '&bookid="</script>';
-        } else {
-            echo '<script>alert("Add inventory failed")</script>';
-            echo '<script>window.location.href = "inventory_add.php"</script>';
-        }
-    } else {
-        echo '<script>alert("Add inventory failed")</script>';
-        echo '<script>window.location.href = "inventory_add.php"</script>';
-    }
-
 }
 ?>
 
@@ -89,6 +49,8 @@ if (isset($_POST['add'])) {
 
     <link rel="stylesheet" href="assets/plugins/select2/css/select2.min.css">
 
+    <link rel="stylesheet" href="assets/plugins/owlcarousel/owl.carousel.min.css">
+
     <link rel="stylesheet" href="assets/css/dataTables.bootstrap4.min.css">
 
     <link rel="stylesheet" href="assets/plugins/fontawesome/css/fontawesome.min.css">
@@ -98,6 +60,10 @@ if (isset($_POST['add'])) {
 </head>
 
 <body>
+    <div id="global-loader">
+        <div class="whirly-loader"> </div>
+    </div>
+
     <div class="main-wrapper">
 
         <div class="header">
@@ -221,56 +187,109 @@ if (isset($_POST['add'])) {
             <div class="content">
                 <div class="page-header">
                     <div class="page-title">
-                        <h4>Product Edit</h4>
-                        <h6>Update your product</h6>
+                        <h4>Supplier Details</h4>
+                        <h6>Full details of supplier</h6>
                     </div>
                 </div>
 
-                <div class="card">
-                    <div class="card-body">
-                        <div class="row">
-                            <form class="my-3"
-                                action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>"
-                                method="POST">
-                                <div class="col-lg-3 col-sm-6 col-12">
-                                    <div class="form-group">
-                                        <input type="number" name="staffid" value="<?php echo $staffid; ?>" hidden>
-                                        <label>Book Id</label>
-                                        <?php
-                                        $allbook = $book->getAllUniqueBook();
-                                        
-                                        if(!is_null($allbook)) {
-                                            echo "<select name='bookid'>";
-                                            foreach($allbook as $allbooks) {
-                                                if($allbooks['BOOKID'] == $allbooks) {
-                                                    echo "<option value='" . $allbooks['BOOKID'] . "' selected>" . $allbooks['BOOK_NAME'] . "</option>";
-                                                } else {
-                                                    echo "<option value='" . $allbooks['BOOKID'] . "'>" . $allbooks['BOOK_NAME'] . "</option>";
-                                                }
+                <div class="row">
+                    <div class="col-lg-8 col-sm-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="productdetails">
+                                    <?php
+                                    // b.bookid, b.isbn, b.book_name, b.book_author, b.book_price, b.publication_date, s.supplier_name, ib.quantity
+                                    $detail = $supplier->getSupplierDetails($supplier_id);
+                                    $detail_supplier_id = "N/A";
+                                    $detail_supplier_name = "N/A";
+                                    $detail_supplier_address = "N/A";
+                                    $detail_contact_person = "N/A";
+                                    $detail_phone_number = "N/A";
+                                    if (!is_null($detail)) {
+                                        foreach ($detail as $details) {
+                                            
+                                            if(isset($details['QUANTITY']) && !empty($details['QUANTITY'])) {
+                                                $detail_quantity = $details['QUANTITY'];
+                                            } else {
+                                                $detail_quantity = "N/A";
                                             }
-                                            echo "</select>";
+
+                                            $detail_supplier_id = $details['SUPPLIER_ID'];
+                                            $detail_supplier_name = $details['SUPPLIER_NAME'];
+                                            $detail_supplier_address = $details['SUPPLIER_ADDRESS'];
+                                            $detail_contact_person = $details['CONTACT_PERSON'];
+                                            $detail_phone_number = $details['PHONE_NUMBER'];
+                                        }
+
+                                    }
+                                    ?>
+                                    <ul class="product-bar">
+                                        <li>
+                                            <h4>Supplier ID</h4>
+                                            <?php
+                                            echo "<h6>$detail_supplier_id</h6>";
+                                            ?>
+                                        </li>
+                                        <li>
+                                            <h4>Supplier Name</h4>
+                                            <?php
+                                            echo "<h6>$detail_supplier_name</h6>";
+                                            ?>
+                                        </li>
+                                        <li>
+                                            <h4>Supplier Address</h4>
+                                            <?php
+                                            echo "<h6>$detail_supplier_address</h6>";
+                                            ?>
+                                        </li>
+                                        <li>
+                                            <h4>Contact Person</h4>
+                                            <?php
+                                            echo "<h6>$detail_contact_person</h6>";
+                                            ?>
+                                        </li>
+                                        <li>
+                                            <h4>Phone Number</h4>
+                                            <?php
+                                            echo "<h6>$detail_phone_number</h6>";
+                                            ?>
+                                        </li>
+                                        <?php
+                                        if($isManager) {
+                                            echo "<li>";
+                                            echo "<h4>Action</h4>";
+                                            echo "<h6>";
+                                            // edit and delete button
+                                            echo "<a href='book_edit.php?bookid=$detail_bookid' class='btn btn-primary'>Edit</a>";
+                                            echo "<a href='book_delete.php?bookid=$detail_bookid' class='btn btn-danger'>Delete</a>";
+                                            echo "</h6>";
+                                            echo "</li>";
                                         }
                                         ?>
-                                    </div>
+                                    </ul>
                                 </div>
-                                <div class="col-lg-3 col-sm-6 col-12">
-                                    <div class="form-group">
-                                        <label>Prchase Price</label>
-                                        <input type="number" name="purchase_price" value="">
-                                    </div>
-                                </div>
-                                <div class="col-lg-3 col-sm-6 col-12">
-                                    <div class="form-group">
-                                        <label>Quantity</label>
-                                        <input type="number" name="quantity" value="">
-                                    </div>
-                                </div>
-                                <div class="col-lg-12">
-                                    <input type="submit" name="add" value="add" class="btn btn-submit me-2">
-                                    <a href="inventory_view.php" class="btn btn-cancel">Cancel</a>
-                                </div>
+                            </div>
                         </div>
-                        </form>
+                    </div>
+                    <div class="col-lg-4 col-sm-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="slider-product-details">
+                                    <div class="owl-carousel owl-theme product-slide">
+                                        <div class="slider-product">
+                                            <?php
+                                            echo "<img src='$detail_url' alt='N/A'>";
+                                            ?>
+                                        </div>
+                                        <div class="slider-product">
+                                            <?php
+                                            echo "<img src='$detail_url' alt='N/A'>";
+                                            ?>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -285,15 +304,11 @@ if (isset($_POST['add'])) {
 
     <script src="assets/js/jquery.slimscroll.min.js"></script>
 
-    <script src="assets/js/jquery.dataTables.min.js"></script>
-    <script src="assets/js/dataTables.bootstrap4.min.js"></script>
-
     <script src="assets/js/bootstrap.bundle.min.js"></script>
 
-    <script src="assets/plugins/select2/js/select2.min.js"></script>
+    <script src="assets/plugins/owlcarousel/owl.carousel.min.js"></script>
 
-    <script src="assets/plugins/sweetalert/sweetalert2.all.min.js"></script>
-    <script src="assets/plugins/sweetalert/sweetalerts.min.js"></script>
+    <script src="assets/plugins/select2/js/select2.min.js"></script>
 
     <script src="assets/js/script.js"></script>
 </body>

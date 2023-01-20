@@ -74,12 +74,15 @@ class Staff extends Connection
     // get staff details
     public function getStaffDetails($staffid)
     {
-        $sql = "SELECT * FROM STAFF WHERE STAFFID = :staffid";
+        $data = array();
+        $sql = "SELECT STAFFID, FIRST_NAME, LAST_NAME, PHONE_NUMBER, SALARY, HIRE_DATE, POSITION, EMAIL, ADDRESS, SUPERVISOR_ID FROM STAFF WHERE STAFFID = :staffid";
         $stmt = oci_parse($this->conn, $sql);
         oci_bind_by_name($stmt, ':staffid', $staffid);
         oci_execute($stmt);
-        $row = oci_fetch_array($stmt, OCI_ASSOC);
-        return $row;
+        while ($row = oci_fetch_array($stmt, OCI_ASSOC)) {
+            $data[] = $row;
+        }
+        return $data;
     }
 
     // get staff position
@@ -268,6 +271,59 @@ class Inventory extends Connection
             return false;
         }
     }
+    // add inventory
+    public function addInventory($staffid)
+    {
+        $sql = "INSERT INTO Inventory (INVID, STAFFID, PURCHASE_DATE) VALUES (INV_ID_SEQ.NEXTVAL, :staffid, SYSDATE)";
+        $stmt = oci_parse($this->conn, $sql);
+        oci_bind_by_name($stmt, ':staffid', $staffid);
+        $execresult = oci_execute($stmt);
+        if($execresult) {
+            $result = oci_commit($this->conn);
+            oci_close($this->conn);
+            return $result;
+        } else {
+            $e = oci_error($this->conn);
+            trigger_error(htmlentities($e['message'], ENT_QUOTES), E_USER_ERROR);
+            oci_rollback($this->conn);
+            oci_close($this->conn);
+            return false;
+        }
+    }
+
+    // add inv book
+    public function addInvBook($invid, $bookid, $quantity, $purchase_price)
+    {
+        $sql = "INSERT INTO inv_book (INVID, BOOKID, QUANTITY, PURCHASE_PRICE) VALUES (:invid, :bookid, :quantity, :purchase_price)";
+        $stmt = oci_parse($this->conn, $sql);
+        oci_bind_by_name($stmt, ':invid', $invid);
+        oci_bind_by_name($stmt, ':bookid', $bookid);
+        oci_bind_by_name($stmt, ':quantity', $quantity);
+        oci_bind_by_name($stmt, ':purchase_price', $purchase_price);
+        $execresult = oci_execute($stmt);
+        if($execresult) {
+            $result = oci_commit($this->conn);
+            oci_close($this->conn);
+            return $result;
+        } else {
+            $e = oci_error($this->conn);
+            trigger_error(htmlentities($e['message'], ENT_QUOTES), E_USER_ERROR);
+            oci_rollback($this->conn);
+            oci_close($this->conn);
+            return false;
+        }
+    }
+
+    // get inv_id_seq currval
+    public function getInvIdSeqCurrval()
+    {
+        $sql = "SELECT INV_ID_SEQ.CURRVAL AS INVID FROM DUAL";
+        $stmt = oci_parse($this->conn, $sql);
+        oci_execute($stmt);
+        $row = oci_fetch_array($stmt, OCI_ASSOC);
+        return $row['INVID'];
+    }
+
 }
 class Supplier extends Connection {
     // get total supplier
@@ -470,6 +526,18 @@ class BOOK extends Connection {
         $row = oci_fetch_array($stmt, OCI_ASSOC);
         return $row['CURRVAL'];
     }
+
+    // get all unique book
+    public function getAllUniqueBook() {
+        $sql = "SELECT DISTINCT BOOK_NAME, BOOKID FROM BOOK";
+        $stmt = oci_parse($this->conn, $sql);
+        oci_execute($stmt);
+        while ($row = oci_fetch_array($stmt, OCI_ASSOC)) {
+            $data[] = $row;
+        }
+        return $data;
+    }
+
 
 
 }
