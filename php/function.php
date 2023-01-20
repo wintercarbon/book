@@ -251,6 +251,18 @@ class Supplier extends Connection {
         }
         return $data;
     }
+
+    // get all supplier_id and supplier_name
+    public function getAllSupplierIDName() {
+        $data = array();
+        $sql = "SELECT supplier_id, supplier_name FROM Supplier";
+        $stmt = oci_parse($this->conn, $sql);
+        oci_execute($stmt);
+        while ($row = oci_fetch_array($stmt, OCI_ASSOC)) {
+            $data[] = $row;
+        }
+        return $data;
+    }
 }
 
 class INV_BOOK extends Connection {
@@ -285,10 +297,11 @@ class BOOK extends Connection {
     // get All Book
     public function getAllBookDetails() {
         $data = array();
-        $sql = "SELECT b.bookid, b.isbn, b.book_name, b.book_author, b.book_price, b.publication_date, s.supplier_name, ib.quantity
+        $sql = "SELECT b.bookid, b.isbn, b.book_name, b.book_author, b.book_price, b.publication_date, s.supplier_name, SUM(ib.quantity) as quantity, b.image_url
         FROM inv_book ib
-        JOIN Book b ON ib.bookid = b.bookid
-        JOIN Supplier s ON b.supplier_id = s.supplier_id";
+        RIGHT OUTER JOIN Book b ON ib.bookid = b.bookid
+        JOIN Supplier s ON b.supplier_id = s.supplier_id
+        GROUP BY b.bookid, b.isbn, b.book_name, b.book_author, b.book_price, b.publication_date, s.supplier_name, b.image_url";
         $stmt = oci_parse($this->conn, $sql);
         oci_execute($stmt);
         while ($row = oci_fetch_array($stmt, OCI_ASSOC)) {
@@ -300,11 +313,12 @@ class BOOK extends Connection {
     // get book details by bookid
     public function getBookDetails($bookid) {
         $data = array();
-        $sql = "SELECT b.bookid, b.isbn, b.book_name, b.book_author, b.book_price, b.publication_date, s.supplier_name, ib.quantity, b.image_url
+        $sql = "SELECT b.bookid, b.isbn, b.book_name, b.book_author, b.book_price, b.publication_date, s.supplier_name, SUM(ib.quantity) as quantity, b.image_url
         FROM inv_book ib
-        JOIN Book b ON ib.bookid = b.bookid
+        RIGHT OUTER JOIN Book b ON ib.bookid = b.bookid
         JOIN Supplier s ON b.supplier_id = s.supplier_id
-        WHERE b.bookid = :bookid";
+        WHERE b.bookid = :bookid
+        GROUP BY b.bookid, b.isbn, b.book_name, b.book_author, b.book_price, b.publication_date, s.supplier_name, b.image_url";
         $stmt = oci_parse($this->conn, $sql);
         oci_bind_by_name($stmt, ':bookid', $bookid);
         oci_execute($stmt);
@@ -313,6 +327,111 @@ class BOOK extends Connection {
         }
         return $data;
     }
+
+    // get book details by bookid for update
+    public function getBookDetailsForUpdate($bookid) {
+        $data = array();
+        $sql = "SELECT bookid, isbn, book_name, book_author, book_price, publication_date, image_url, supplier_id FROM Book WHERE bookid = :bookid";
+        $stmt = oci_parse($this->conn, $sql);
+        oci_bind_by_name($stmt, ':bookid', $bookid);
+        oci_execute($stmt);
+        while ($row = oci_fetch_array($stmt, OCI_ASSOC)) {
+            $data[] = $row;
+        }
+        return $data;
+    }
+
+    // update book
+
+    public function updateBook($bookid, $isbn, $book_name, $book_author, $book_price, $publication_date, $image_url, $supplier_id) {
+        $sql = "UPDATE BOOK SET ISBN = :isbn, BOOK_NAME = :book_name, BOOK_AUTHOR = :book_author, BOOK_PRICE = :book_price, PUBLICATION_DATE = to_date(:publication_date, 'dd-mon-yyyy'), IMAGE_URL = :image_url, SUPPLIER_ID = :supplier_id WHERE BOOKID = :bookid";
+        $stmt = oci_parse($this->conn, $sql);
+        if (!$stmt) {
+            $e = oci_error($this->conn);
+            trigger_error(htmlentities($e['message'], ENT_QUOTES), E_USER_ERROR);
+        }
+        oci_bind_by_name($stmt, ':bookid', $bookid);
+        oci_bind_by_name($stmt, ':isbn', $isbn);
+        oci_bind_by_name($stmt, ':book_name', $book_name);
+        oci_bind_by_name($stmt, ':book_author', $book_author);
+        oci_bind_by_name($stmt, ':book_price', $book_price);
+        oci_bind_by_name($stmt, ':publication_date', $publication_date);
+        oci_bind_by_name($stmt, ':image_url', $image_url);
+        oci_bind_by_name($stmt, ':supplier_id', $supplier_id);
+        $execresult = oci_execute($stmt);
+        if($execresult) {
+            $result = oci_commit($this->conn);
+            oci_close($this->conn);
+            return $result;
+        } else {
+            $e = oci_error($this->conn);
+            trigger_error(htmlentities($e['message'], ENT_QUOTES), E_USER_ERROR);
+            oci_rollback($this->conn);
+            oci_close($this->conn);
+            return false;
+        }
+    }
+    
+    public function deleteBook($bookid) {
+        $sql = "DELETE FROM BOOK WHERE BOOKID = :bookid";
+        $stmt = oci_parse($this->conn, $sql);
+        if (!$stmt) {
+            $e = oci_error($this->conn);
+            trigger_error(htmlentities($e['message'], ENT_QUOTES), E_USER_ERROR);
+        }
+        oci_bind_by_name($stmt, ':bookid', $bookid);
+        $execresult = oci_execute($stmt);
+        if($execresult) {
+            $result = oci_commit($this->conn);
+            oci_close($this->conn);
+            return $result;
+        } else {
+            $e = oci_error($this->conn);
+            trigger_error(htmlentities($e['message'], ENT_QUOTES), E_USER_ERROR);
+            oci_rollback($this->conn);
+            oci_close($this->conn);
+            return false;
+        }
+    }
+
+    // insert into book
+    public function insertBook($isbn, $book_name, $book_author, $book_price, $publication_date, $image_url, $supplier_id) {
+        $sql = "INSERT INTO BOOK (BOOKID, ISBN, BOOK_NAME, BOOK_AUTHOR, BOOK_PRICE, PUBLICATION_DATE, IMAGE_URL, SUPPLIER_ID) VALUES (book_id_seq.NEXTVAL, :isbn, :book_name, :book_author, :book_price, to_date(:publication_date, 'dd-mon-yyyy'), :image_url, :supplier_id)";
+        $stmt = oci_parse($this->conn, $sql);
+        if (!$stmt) {
+            $e = oci_error($this->conn);
+            trigger_error(htmlentities($e['message'], ENT_QUOTES), E_USER_ERROR);
+        }
+        oci_bind_by_name($stmt, ':isbn', $isbn);
+        oci_bind_by_name($stmt, ':book_name', $book_name);
+        oci_bind_by_name($stmt, ':book_author', $book_author);
+        oci_bind_by_name($stmt, ':book_price', $book_price);
+        oci_bind_by_name($stmt, ':publication_date', $publication_date);
+        oci_bind_by_name($stmt, ':image_url', $image_url);
+        oci_bind_by_name($stmt, ':supplier_id', $supplier_id);
+        $execresult = oci_execute($stmt);
+        if($execresult) {
+            $result = oci_commit($this->conn);
+            oci_close($this->conn);
+            return $result;
+        } else {
+            $e = oci_error($this->conn);
+            trigger_error(htmlentities($e['message'], ENT_QUOTES), E_USER_ERROR);
+            oci_rollback($this->conn);
+            oci_close($this->conn);
+            return false;
+        }
+    }
+
+    // get current book_id_seq
+    public function getBookIdSeq() {
+        $sql = "SELECT book_id_seq.currval FROM DUAL";
+        $stmt = oci_parse($this->conn, $sql);
+        oci_execute($stmt);
+        $row = oci_fetch_array($stmt, OCI_ASSOC);
+        return $row['CURRVAL'];
+    }
+
 
 }
 

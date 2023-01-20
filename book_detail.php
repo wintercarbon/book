@@ -212,6 +212,13 @@ if ($staffpos == 'Manager') {
                                     $detail_url = "";
                                     if (!is_null($detail)) {
                                         foreach ($detail as $details) {
+                                            
+                                            if(isset($details['QUANTITY']) && !empty($details['QUANTITY'])) {
+                                                $detail_quantity = $details['QUANTITY'];
+                                            } else {
+                                                $detail_quantity = "N/A";
+                                            }
+
                                             $detail_bookid = $details['BOOKID'];
                                             $detail_isbn = $details['ISBN'];
                                             $detail_book_name = $details['BOOK_NAME'];
@@ -219,7 +226,6 @@ if ($staffpos == 'Manager') {
                                             $detail_book_price = $details['BOOK_PRICE'];
                                             $detail_publication_date = $details['PUBLICATION_DATE'];
                                             $detail_supplier_name = $details['SUPPLIER_NAME'];
-                                            $detail_quantity = $details['QUANTITY'];
                                             $detail_url = $details['IMAGE_URL'];
                                         }
 

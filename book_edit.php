@@ -2,6 +2,9 @@
 
 session_start();
 
+// get bookid from url
+$bookid = $_GET['bookid'];
+
 // check if user is logged in
 if (!isset($_SESSION['staffid'])) {
     header('Location: index.php');
@@ -14,6 +17,7 @@ $staffid = $_SESSION['staffid'];
 $inventory = new Inventory();
 $staff = new Staff();
 $book = new BOOK();
+$supplier = new Supplier();
 $staffname = $staff->getStaffFullName($staffid);
 $staffpos = $staff->getStaffPosition($staffid);
 
@@ -24,8 +28,67 @@ if ($staffpos == 'Manager') {
     $isManager = false;
 }
 
+?>
+<?php
 
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update'])) {
+    $bookid = $_POST['bookid'];
+    $isbn = $_POST['isbn'];
+    $book_name = $_POST['book_name'];
+    $book_author = $_POST['book_author'];
+    $book_price = $_POST['book_price'];
+    $date = $_POST['book_publication_date'];
+    $publication_date = date("d-M-Y", strtotime($date));
+    $image_url = $_POST['book_image'];
+    $getsupplier = $_POST['supplierid'];
 
+    if($result = $book->updateBook($bookid, $isbn, $book_name, $book_author, $book_price, $publication_date, $image_url, $getsupplier)) {
+        
+        echo "<script>alert('Book update successfully!');</script>";
+    } else {
+        echo "<script>alert('Book update failed!');</script>";
+    }
+}
+
+// delete
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete'])) {
+    $bookid = $_POST['bookid'];
+    if($result = $book->deleteBook($bookid)) {
+        echo "<script>alert('Book deleted successfully!');</script>";
+        echo '<script>window.location.href = "book_view.php"</script>';
+    } else {
+        echo "<script>alert('Book delete failed!');</script>";
+    }
+}
+?>
+<?php
+
+// b.bookid, b.isbn, b.book_name, b.book_author, b.book_price, b.publication_date, s.supplier_name, ib.quantity
+
+$bookid = $_GET['bookid'];
+
+$detail = $book->getBookDetailsForUpdate($bookid);
+$detail_bookid = "N/A";
+$detail_isbn = "N/A";
+$detail_book_name = "N/A";
+$detail_author = "N/A";
+$detail_book_price = "N/A";
+$detail_publication_date = "N/A";
+$detail_supplierid = "N/A";
+$detail_url = "";
+if (!is_null($detail)) {
+    foreach ($detail as $details) {
+        $detail_bookid = $details['BOOKID'];
+        $detail_isbn = $details['ISBN'];
+        $detail_book_name = $details['BOOK_NAME'];
+        $detail_author = $details['BOOK_AUTHOR'];
+        $detail_book_price = $details['BOOK_PRICE'];
+        $detail_publication_date = $details['PUBLICATION_DATE'];
+        $detail_url = $details['IMAGE_URL'];
+        $detail_supplierid = $details['SUPPLIER_ID'];
+    }
+
+}
 ?>
 
 <!DOCTYPE html>
@@ -58,10 +121,6 @@ if ($staffpos == 'Manager') {
 </head>
 
 <body>
-    <div id="global-loader">
-        <div class="whirly-loader"> </div>
-    </div>
-
     <div class="main-wrapper">
 
         <div class="header">
@@ -97,14 +156,8 @@ if ($staffpos == 'Manager') {
                                 <!-- <span class="user-img"><img src="assets/img/profiles/avator1.jpg" alt=""> -->
                                 <span class="status online"></span></span>
                                 <div class="profilesets">
-                                    <h6>
-                                        <?php
-                                        echo $staffname;
-                                        ?>
-                                    </h6>
-                                    <h5><?php
-                                    echo $staffpos;
-                                    ?></h5>
+                                    <h6>D. Luffy</h6>
+                                    <h5>Admin</h5>
                                 </div>
                             </div>
                             <hr class="m-0">
@@ -112,7 +165,7 @@ if ($staffpos == 'Manager') {
                                 Profile</a>
                             <!-- <a class="dropdown-item" href="generalsettings.php"><i class="me-2" data-feather="settings"></i>Settings</a> -->
                             <hr class="m-0">
-                            <a class="dropdown-item logout pb-0" href="logout.php"><img
+                            <a class="dropdown-item logout pb-0" href="index.php"><img
                                     src="assets/img/icons/log-out.svg" class="me-2" alt="img">Logout</a>
                         </div>
                     </div>
@@ -126,11 +179,12 @@ if ($staffpos == 'Manager') {
                 <div class="dropdown-menu dropdown-menu-right">
                     <a class="dropdown-item" href="profile.php">My Profile</a>
                     <!-- <a class="dropdown-item" href="generalsettings.php">Settings</a> -->
-                    <a class="dropdown-item" href="logout.php">Logout</a>
+                    <a class="dropdown-item" href="signin.php">Logout</a>
                 </div>
             </div>
 
         </div>
+
 
         <div class="sidebar" id="sidebar">
             <div class="sidebar-inner slimscroll">
@@ -190,95 +244,94 @@ if ($staffpos == 'Manager') {
             <div class="content">
                 <div class="page-header">
                     <div class="page-title">
-                        <h4>Book List</h4>
-                        <h6>Manage Book</h6>
-                    </div>
-                    <div class="page-btn">
-                        <a href="addproduct.php" class="btn btn-added"><img src="assets/img/icons/plus.svg" alt="img"
-                                class="me-1">Add New Book</a>
+                        <h4>Product Edit</h4>
+                        <h6>Update your product</h6>
                     </div>
                 </div>
 
                 <div class="card">
                     <div class="card-body">
-                        <div class="table-top">
-                            <div class="search-set">
-                                <div class="search-path">
-                                    <span><img src="assets/img/icons/closes.svg" alt="img"></span>
-                                    </a>
-                                </div>
-                                <div class="search-input">
-                                    <a class="btn btn-searchset"><img src="assets/img/icons/search-white.svg"
-                                            alt="img"></a>
-                                </div>
-                            </div>
-                            <div class="wordset">
-                                <ul>
-                                </ul>
-                            </div>
-                        </div>
-
-                        <div class="card mb-0" id="filter_inputs">
-                            <div class="card-body pb-0">
-                                <div class="row">
-                                    <div class="col-lg-12 col-sm-12">
-                                        <div class="row">
-                                            <div class="col-lg-1 col-sm-6 col-12">
-                                            </div>
-                                        </div>
+                        <div class="row">
+                            <form class="my-3"
+                                action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]) . "?bookid=" . $bookid; ?>"
+                                method="POST">
+                                <div class="col-lg-3 col-sm-6 col-12">
+                                    <div class="form-group">
+                                        <input type="number" name="bookid" value="<?php echo $detail_bookid; ?>" hidden>
+                                        <label>Book ID</label>
+                                        <input type="number" value="<?php echo $detail_bookid; ?>" disabled>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="table-responsive">
-                            <table class="table  datanew">
-                                <thead>
-                                    <tr>
-                                        <th>Book ID</th>
-                                        <th>ISBN</th>
-                                        <th>Book Name</th>
-                                        <th>Author</th>
-                                        <th>Book Price</th>
-                                        <th>Publication Date</th>
-                                        <th>Supplier Name</th>
-                                        <th>Quantity</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php
-                                    $detail = $book->getAllBookDetails();
-                                    if (!is_null($detail)) {
-                                        foreach ($detail as $details) {
-
-                                            if(isset($details['QUANTITY']) && !empty($details['QUANTITY'])) {
-                                                $q = $details['QUANTITY'];
-                                            } else {
-                                                $q = "N/A";
+                                <div class="col-lg-3 col-sm-6 col-12">
+                                    <div class="form-group">
+                                        <label>ISBN</label>
+                                        <input type="text" name="isbn" value="<?php echo $detail_isbn; ?>">
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-sm-6 col-12">
+                                    <div class="form-group">
+                                        <label>Book Name</label>
+                                        <input type="text" name="book_name" value="<?php echo $detail_book_name; ?>">
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-sm-6 col-12">
+                                    <div class="form-group">
+                                        <label>Author</label>
+                                        <input type="text" name="book_author" value="<?php echo $detail_author; ?>">
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-sm-6 col-12">
+                                    <div class="form-group">
+                                        <label>Book Price</label>
+                                        <input type="number" name="book_price"
+                                            value="<?php echo $detail_book_price; ?>">
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-sm-6 col-12">
+                                    <div class="form-group">
+                                        <label>Publication Date</label>
+                                        <?php
+                                        $newDate = date("Y-m-d", strtotime($detail_publication_date));
+                                        ?>
+                                        <input type="date" name="book_publication_date" value="<?php echo $newDate; ?>">
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-sm-6 col-12">
+                                    <div class="form-group">
+                                        <label>Image URL</label>
+                                        <input type="text" name="book_image" value="<?php echo $detail_url; ?>">
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-sm-6 col-12">
+                                    <div class="form-group">
+                                        <label>Supplier</label>
+                                        <?php
+                                        $getAllSupplier = $supplier->getAllSupplierIDName();
+                                        if(!is_null($getAllSupplier)) {
+                                            echo "<select name='supplierid'>";
+                                            foreach($getAllSupplier as $getAllSuppliers) {
+                                                if($getAllSuppliers['SUPPLIER_ID'] == $detail_supplierid) {
+                                                    echo "<option value='" . $getAllSuppliers['SUPPLIER_ID'] . "' selected>" . $getAllSuppliers['SUPPLIER_NAME'] . "</option>";
+                                                } else {
+                                                    echo "<option value='" . $getAllSuppliers['SUPPLIER_ID'] . "'>" . $getAllSuppliers['SUPPLIER_NAME'] . "</option>";
+                                                }
                                             }
-                                            
-
-                                            echo "<tr>";
-                                            echo "<td>" . $details['BOOKID'] . "</td>";
-                                            echo "<td>" . $details['ISBN'] . "</td>";
-                                            echo "<td>" . $details['BOOK_NAME'] . "</td>";
-                                            echo "<td>" . $details['BOOK_AUTHOR'] . "</td>";
-                                            echo "<td>" . $details['BOOK_PRICE'] . "</td>";
-                                            echo "<td>" . $details['PUBLICATION_DATE'] . "</td>";
-                                            echo "<td>" . $details['SUPPLIER_NAME'] . "</td>";
-                                            echo "<td>" . $q . "</td>";
-                                            echo "<td>";
-                                            echo "<a href='book_detail.php?bookid=" . $details['BOOKID'] . "'><img src='assets/img/icons/EYE.svg' alt='img'></a>";
-                                            if ($isManager) {
-                                                echo "<a href='book_edit.php?bookid=" . $details['BOOKID'] . "'><img src='assets/img/icons/edit.svg' alt='img'></a>";
-                                                echo "<a href='book_delete.php?bookid=" . $details['BOOKID'] . "'><img src='assets/img/icons/delete.svg' alt='img'></a></td>";
-                                            }
+                                            echo "</select>";
                                         }
-                                    }
-                                    ?>
-                                </tbody>
-                            </table>
+                                        ?>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <input type="submit" name="update" value="update" class="btn btn-submit me-2">
+                                    <a href="book_view.php" class="btn btn-cancel">Cancel</a>
+                                </div>
                         </div>
+                        </form>
+                        <form class="border-bottom" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]) . "?bookid=" . $bookid; ?>" method="POST" id="deleteForm" onsubmit="return confirm('Are you sure you want to delete the book?');">
+                            <input type="number" name="bookid" value="<?php echo $detail_bookid; ?>" hidden>
+                            <input type="hidden" name="delete" value="delete">
+                            <input type="submit" name="delete" value="Delete" class="btn btn-danger">
+                        </form>
                     </div>
                 </div>
 
