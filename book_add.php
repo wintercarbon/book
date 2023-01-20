@@ -26,6 +26,10 @@ if ($staffpos == 'Manager') {
     $isManager = false;
 }
 
+// check not manager go to dashboard
+if (!$isManager) {
+    header('Location: dashboard.php');
+}
 
 
 ?>

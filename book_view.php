@@ -193,9 +193,15 @@ if ($staffpos == 'Manager') {
                         <h4>Book List</h4>
                         <h6>Manage Book</h6>
                     </div>
+
                     <div class="page-btn">
-                        <a href="addproduct.php" class="btn btn-added"><img src="assets/img/icons/plus.svg" alt="img"
-                                class="me-1">Add New Book</a>
+                        <?php
+                        if($isManager) {
+                            echo '<a href="book_add.php" class="btn btn-added"><img src="assets/img/icons/plus.svg" alt="img"
+                            class="me-1">Add New Book</a>';
+                        }
+                        ?>
+                        
                     </div>
                 </div>
 
