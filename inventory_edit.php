@@ -2,7 +2,8 @@
 
 session_start();
 
-// get bookid from url
+// get INVID from url
+$INVID = $_GET['INVID'];
 $bookid = $_GET['bookid'];
 
 // check if user is logged in
@@ -28,69 +29,52 @@ if ($staffpos == 'Manager') {
     $isManager = false;
 }
 
-// check not manager go to dashboard
-if (!$isManager) {
-    header('Location: dashboard.php');
-}
 
 ?>
 <?php
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update'])) {
-    $bookid = $_POST['bookid'];
-    $isbn = $_POST['isbn'];
-    $book_name = $_POST['book_name'];
-    $book_author = $_POST['book_author'];
-    $book_price = $_POST['book_price'];
-    $date = $_POST['book_publication_date'];
-    $publication_date = date("d-M-Y", strtotime($date));
-    $image_url = $_POST['book_image'];
-    $getsupplier = $_POST['supplierid'];
+    $INVID = $_POST['invid'];
+    $QUANTITY = $_POST['quantity'];
+    $BOOKID = $_POST['bookid'];
+    $PURCHASE_PRICE = $_POST['PURCHASE_PRICE'];
 
-    if($result = $book->updateBook($bookid, $isbn, $book_name, $book_author, $book_price, $publication_date, $image_url, $getsupplier)) {
-        
-        echo "<script>alert('Book update successfully!');</script>";
+    // UPDATE: UPDATE INV_BOOK SET QUANTITY = :QUANTITY WHERE INVID = :INVID AND BOOKID = :BOOKID
+    // UPDATE: UPDATE INV_BOOK SET PURCHASE_PRICE = :PURCHASE_PRICE WHERE INVID = :INVID AND BOOKID = :BOOKID // ONLY FOR MANAGER
+    if($result = $inventory->updateInventoryBook($INVID, $BOOKID, $QUANTITY, $PURCHASE_PRICE)) {
+        echo "<script>alert('Inventory updated successfully!');</script>";
     } else {
-        echo "<script>alert('Book update failed!');</script>";
+        echo "<script>alert('Inventory update failed!');</script>";
     }
 }
 
-// delete
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete'])) {
-    $bookid = $_POST['bookid'];
-    if($result = $book->deleteBook($bookid)) {
-        echo "<script>alert('Book deleted successfully!');</script>";
-        echo '<script>window.location.href = "book_view.php"</script>';
-    } else {
-        echo "<script>alert('Book delete failed!');</script>";
-    }
-}
 ?>
 <?php
 
-// b.bookid, b.isbn, b.book_name, b.book_author, b.book_price, b.publication_date, s.supplier_name, ib.quantity
+// b.INVID, b.isbn, b.book_name, b.book_author, b.book_price, b.publication_date, s.supplier_name, ib.quantity
 
+$INVID = $_GET['INVID'];
 $bookid = $_GET['bookid'];
 
-$detail = $book->getBookDetailsForUpdate($bookid);
+$detail = $inventory->getInventoryByid($INVID, $bookid);
+ // I.INVID, b.bookid, b.book_name, ib.quantity,ib.purchase_price, b.book_price, i.purchase_date
+$detail_invid = "N/A";
 $detail_bookid = "N/A";
-$detail_isbn = "N/A";
 $detail_book_name = "N/A";
-$detail_author = "N/A";
+$detail_quantity = "N/A";
+$detail_purchase_price = "N/A";
 $detail_book_price = "N/A";
-$detail_publication_date = "N/A";
-$detail_supplierid = "N/A";
-$detail_url = "";
+$detail_purchase_date = "N/A";
+
 if (!is_null($detail)) {
     foreach ($detail as $details) {
+        $detail_invid = $details['INVID'];
         $detail_bookid = $details['BOOKID'];
-        $detail_isbn = $details['ISBN'];
         $detail_book_name = $details['BOOK_NAME'];
-        $detail_author = $details['BOOK_AUTHOR'];
+        $detail_quantity = $details['QUANTITY'];
+        $detail_purchase_price = $details['PURCHASE_PRICE'];
         $detail_book_price = $details['BOOK_PRICE'];
-        $detail_publication_date = $details['PUBLICATION_DATE'];
-        $detail_url = $details['IMAGE_URL'];
-        $detail_supplierid = $details['SUPPLIER_ID'];
+        $detail_purchase_date = $details['PURCHASE_DATE'];
     }
 
 }
@@ -200,11 +184,11 @@ if (!is_null($detail)) {
                                     Dashboard</span> </a>
                         </li>
                         <li class="submenu">
-                            <a href="javascript:void(0);"><img src="assets/img/icons/product.svg" alt="img"><span>
+                            <a href="javascript:void(0);"><img src="assets/img/icons/Inventory.svg" alt="img"><span>
                                     Books</span> <span class="menu-arrow"></span></a>
                             <ul>
-                                <li><a href="productlist.php">Book List</a></li>
-                                <li><a href="addproduct.php">Add Book</a></li>
+                                <li><a href="Inventorylist.php">Book List</a></li>
+                                <li><a href="addInventory.php">Add Book</a></li>
                             </ul>
                         </li>
 
@@ -249,8 +233,8 @@ if (!is_null($detail)) {
             <div class="content">
                 <div class="page-header">
                     <div class="page-title">
-                        <h4>Product Edit</h4>
-                        <h6>Update your product</h6>
+                        <h4>Inventory Edit</h4>
+                        <h6>Update your Inventory</h6>
                     </div>
                 </div>
 
@@ -258,8 +242,15 @@ if (!is_null($detail)) {
                     <div class="card-body">
                         <div class="row">
                             <form class="my-3"
-                                action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]) . "?bookid=" . $bookid; ?>"
+                                action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]) . "?INVID=" . $INVID . "&bookid=" . $bookid; ?>"
                                 method="POST">
+                                <div class="col-lg-3 col-sm-6 col-12">
+                                    <div class="form-group">
+                                        <input type="number" name="invid" value="<?php echo $detail_invid; ?>" hidden>
+                                        <label>Inventory ID</label>
+                                        <input type="number" value="<?php echo $detail_invid; ?>" disabled>
+                                    </div>
+                                </div>
                                 <div class="col-lg-3 col-sm-6 col-12">
                                     <div class="form-group">
                                         <input type="number" name="bookid" value="<?php echo $detail_bookid; ?>" hidden>
@@ -269,73 +260,51 @@ if (!is_null($detail)) {
                                 </div>
                                 <div class="col-lg-3 col-sm-6 col-12">
                                     <div class="form-group">
-                                        <label>ISBN</label>
-                                        <input type="text" name="isbn" value="<?php echo $detail_isbn; ?>">
-                                    </div>
-                                </div>
-                                <div class="col-lg-3 col-sm-6 col-12">
-                                    <div class="form-group">
                                         <label>Book Name</label>
-                                        <input type="text" name="book_name" value="<?php echo $detail_book_name; ?>">
-                                    </div>
-                                </div>
-                                <div class="col-lg-3 col-sm-6 col-12">
-                                    <div class="form-group">
-                                        <label>Author</label>
-                                        <input type="text" name="book_author" value="<?php echo $detail_author; ?>">
+                                        <input type="text" value="<?php echo $detail_book_name; ?>" disabled>
                                     </div>
                                 </div>
                                 <div class="col-lg-3 col-sm-6 col-12">
                                     <div class="form-group">
                                         <label>Book Price</label>
-                                        <input type="number" name="book_price"
-                                            value="<?php echo $detail_book_price; ?>">
+                                        <input type="number" value="<?php echo $detail_book_price; ?>" disabled>
                                     </div>
                                 </div>
                                 <div class="col-lg-3 col-sm-6 col-12">
                                     <div class="form-group">
-                                        <label>Publication Date</label>
+                                        <label>Purchase Price</label>
                                         <?php
-                                        $newDate = date("Y-m-d", strtotime($detail_publication_date));
-                                        ?>
-                                        <input type="date" name="book_publication_date" value="<?php echo $newDate; ?>">
-                                    </div>
-                                </div>
-                                <div class="col-lg-3 col-sm-6 col-12">
-                                    <div class="form-group">
-                                        <label>Image URL</label>
-                                        <input type="text" name="book_image" value="<?php echo $detail_url; ?>">
-                                    </div>
-                                </div>
-                                <div class="col-lg-3 col-sm-6 col-12">
-                                    <div class="form-group">
-                                        <label>Supplier</label>
-                                        <?php
-                                        $getAllSupplier = $supplier->getAllSupplierIDName();
-                                        if(!is_null($getAllSupplier)) {
-                                            echo "<select name='supplierid'>";
-                                            foreach($getAllSupplier as $getAllSuppliers) {
-                                                if($getAllSuppliers['SUPPLIER_ID'] == $detail_supplierid) {
-                                                    echo "<option value='" . $getAllSuppliers['SUPPLIER_ID'] . "' selected>" . $getAllSuppliers['SUPPLIER_NAME'] . "</option>";
-                                                } else {
-                                                    echo "<option value='" . $getAllSuppliers['SUPPLIER_ID'] . "'>" . $getAllSuppliers['SUPPLIER_NAME'] . "</option>";
-                                                }
-                                            }
-                                            echo "</select>";
+                                        if($isManager) {
+                                            echo '<input type="number" name="PURCHASE_PRICE" value="' . $detail_purchase_price . '">';
+                                        } else {
+                                            echo "<input type='number' name='PURCHASE_PRICE' value='$detail_purchase_price' hidden>";
+                                            echo "<input type='number' name='PURCHASE_PRICE' value='$detail_purchase_price' disabled>";
                                         }
                                         ?>
                                     </div>
                                 </div>
+                                <div class="col-lg-3 col-sm-6 col-12">
+                                    <div class="form-group">
+                                        <label>Purchase Date</label>
+                                        <?php
+                                        $newDate = date("Y-m-d", strtotime($detail_purchase_date));
+                                        ?>
+                                        <input type="date" value="<?php echo $newDate; ?>" disabled>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-sm-6 col-12">
+                                    <div class="form-group">
+                                        <label>Quantity</label>
+                                        <input type="number" name="quantity" value="<?php echo $detail_quantity; ?>">
+                                    </div>
+                                </div>
+
+
                                 <div class="col-lg-12">
                                     <input type="submit" name="update" value="update" class="btn btn-submit me-2">
-                                    <a href="book_view.php" class="btn btn-cancel">Cancel</a>
+                                    <a href="inventory_view.php" class="btn btn-cancel">Cancel</a>
                                 </div>
                         </div>
-                        </form>
-                        <form class="border-bottom" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]) . "?bookid=" . $bookid; ?>" method="POST" id="deleteForm" onsubmit="return confirm('Are you sure you want to delete the book?');">
-                            <input type="number" name="bookid" value="<?php echo $detail_bookid; ?>" hidden>
-                            <input type="hidden" name="delete" value="delete">
-                            <input type="submit" name="delete" value="Delete" class="btn btn-danger">
                         </form>
                     </div>
                 </div>

@@ -227,9 +227,48 @@ class Inventory extends Connection
         return $data;
     }
 
+    // get by invid
+    public function getInventoryByid($invid, $bookid)
+    {
+        $data = array();
+        $sql = "SELECT I.INVID, b.bookid, b.book_name, ib.quantity,ib.purchase_price, b.book_price, i.purchase_date
+        FROM Inventory i
+        JOIN inv_book ib ON i.invid = ib.invid
+        JOIN Book b ON ib.bookid = b.bookid
+        WHERE i.INVID = :INVID AND b.bookid = :bookid";
+        $stmt = oci_parse($this->conn, $sql);
+        oci_bind_by_name($stmt, ':INVID', $invid);
+        oci_bind_by_name($stmt, ':bookid', $bookid);
+        oci_execute($stmt);
+        while ($row = oci_fetch_array($stmt, OCI_ASSOC)) {
+            $data[] = $row;
+        }
+        return $data;
+    }
 
+    // update inventory book
+    public function updateInventoryBook($invid, $bookid, $quantity, $purchase_price)
+    {
+        $sql = "UPDATE inv_book SET quantity = :quantity, purchase_price = :purchase_price WHERE invid = :invid AND bookid = :bookid";
+        $stmt = oci_parse($this->conn, $sql);
+        oci_bind_by_name($stmt, ':invid', $invid);
+        oci_bind_by_name($stmt, ':bookid', $bookid);
+        oci_bind_by_name($stmt, ':quantity', $quantity);
+        oci_bind_by_name($stmt, ':purchase_price', $purchase_price);
+        $execresult = oci_execute($stmt);
+        if($execresult) {
+            $result = oci_commit($this->conn);
+            oci_close($this->conn);
+            return $result;
+        } else {
+            $e = oci_error($this->conn);
+            trigger_error(htmlentities($e['message'], ENT_QUOTES), E_USER_ERROR);
+            oci_rollback($this->conn);
+            oci_close($this->conn);
+            return false;
+        }
+    }
 }
-
 class Supplier extends Connection {
     // get total supplier
     public function getTotalSupplier() {

@@ -254,7 +254,7 @@ if ($staffpos == 'Manager') {
                                         echo "<td>".$details['QUANTITY']."</td>";
                                         echo "<td>".$details['PURCHASE_PRICE']."</td>";
                                         echo "<td>".$details['PURCHASE_DATE']."</td>";
-                                        echo "<td><a href='inventory_edit.php?INVID=".$details['INVID']."'><img src='assets/img/icons/edit.svg' alt='img'></a><a href='inventory_delete.php?INVID=".$details['INVID']."'><img src='assets/img/icons/delete.svg' alt='img'></a></td>";
+                                        echo "<td><a href='inventory_edit.php?INVID=".$details['INVID']."&bookid=".$details['BOOKID']."'><img src='assets/img/icons/edit.svg' alt='img'></a></td>";
                                         echo "</tr>";
                                     }
                                 }
