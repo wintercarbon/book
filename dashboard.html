@@ -128,6 +128,7 @@
     <ul>
     <li><a href="newuser.html">New User </a></li>
     <li><a href="userlists.html">User List</a></li>
+    
     </ul>
     </li>
     
@@ -145,7 +146,8 @@
 <div class="dash-count">
 <div class="dash-counts">
 <h4>100</h4>
-<h5>Suppliers</h5>
+<h5>Staff</h5>
+<a href="userlists.html" class="btn btn-primary">Manage Staff</a>
 </div>
 <div class="dash-imgs">
 <i data-feather="user"></i>
@@ -156,29 +158,43 @@
 <div class="dash-count das1">
 <div class="dash-counts">
 <h4>100</h4>
-<h5>Purchase</h5>
+<h5>Supplier</h5>
+<a href="supplier_view.php" class="btn btn-primary">Manage Suppliers</a>
 </div>
 <div class="dash-imgs">
 <i data-feather="user-check"></i>
 </div>
 </div>
 </div>
-<!-- <div class="col-lg-3 col-sm-6 col-12 d-flex">
+<div class="col-lg-3 col-sm-6 col-12 d-flex">
 <div class="dash-count das2">
 <div class="dash-counts">
 <h4>100</h4>
-<h5>Sales</h5>
+<h5>Inventory</h5>
+<a href="inventory_view.php" class="btn btn-primary">Manage Inventory</a>
 </div>
 <div class="dash-imgs">
-<i data-feather="file-text"></i>
+<i data-feather="package"></i>
 </div>
 </div>
 </div>
-</div> -->
+<div class="col-lg-3 col-sm-6 col-12 d-flex">
+    <div class="dash-count das3">
+    <div class="dash-counts">
+    <h4>100</h4>
+    <h5>Books</h5>
+    <a href="book_view.php" class="btn btn-primary">Manage Books</a>
+    </div>
+    <div class="dash-imgs">
+    <i data-feather="book-open"></i>
+    </div>
+    </div>
+    </div>
+</div>
 
 <div class="card mb-0">
 <div class="card-body">
-<h4 class="card-title">Frequently Purchased</h4>
+<h4 class="card-title">Most quantity Book</h4>
 <div class="table-responsive dataview">
 <table class="table datatable ">
 <thead>
@@ -187,6 +203,7 @@
 <th>Book Name</th>
 <th>Author</th>
 <th>Price</th>
+<th>Quantity</th>
 </tr>
 </thead>
 <tbody>
@@ -200,6 +217,7 @@
 </td>
 <td>Mr Lee</td>
 <td>40.00</td>
+<td>16</td>
 </tr>
 </tbody>
 </table>
