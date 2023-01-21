@@ -29,7 +29,7 @@ if ($staffpos == 'Manager') {
 
 //check not manager go to dashboard
 if (!$isManager) {
-    //    header ('Location: dashboard.php');
+        header ('Location: dashboard.php');
 }
 ?>
 
@@ -60,7 +60,7 @@ if (isset($_POST['add'])) {
         echo "'<script>alert('Staff added successfully')</script>";
         echo '<script>window.location.href = "staff_details.php?staffid=' . $newstaff . '"</script>';
     } else {
-        echo "<script>alert('Fail to add staff $first_name, $last_name, $phone_number, $checksalary, $salary, $hire_date, $password, $position, $supervisor_id, $checksupervisor')</script>";
+        echo "<script>alert('Fail to add staff')</script>";
         echo '<script>window.location.href = "staff_add.php"</script>';
     }
 }
@@ -103,18 +103,15 @@ if (isset($_POST['add'])) {
 
     <div class="main-wrapper">
 
-        <div class="header">
-
+    <div class="header">
             <div class="header-left active">
-                <a href="dashboard.html" class="logo">
+                <a href="dashboard.php" class="logo">
                     <img src="assets/img/logos.png" alt="">
                 </a>
-                <a href="dashboard.html" class="logo-small">
+                <a href="dashboard.php" class="logo-small">
                     <img src="assets/img/logos.png" alt="">
                 </a>
-
             </div>
-
             <a id="mobile_btn" class="mobile_btn" href="#sidebar">
                 <span class="bar-icon">
                     <span></span>
@@ -122,9 +119,7 @@ if (isset($_POST['add'])) {
                     <span></span>
                 </span>
             </a>
-
             <ul class="nav user-menu">
-
                 <li class="nav-item dropdown has-arrow main-drop">
                     <a href="javascript:void(0);" class="dropdown-toggle nav-link userset" data-bs-toggle="dropdown">
                         <span class="user-img"><img src="assets/img/luffy.png" alt="">
@@ -133,36 +128,36 @@ if (isset($_POST['add'])) {
                     <div class="dropdown-menu menu-drop-user">
                         <div class="profilename">
                             <div class="profileset">
-                                <!-- <span class="user-img"><img src="assets/img/profiles/avator1.jpg" alt=""> -->
                                 <span class="status online"></span></span>
                                 <div class="profilesets">
-                                    <h6>D. Luffy</h6>
-                                    <h5>Admin</h5>
+                                    <h6>
+                                        <?php
+                                        echo $staffname;
+                                        ?>
+                                    </h6>
+                                    <h5><?php
+                                    echo $staffpos;
+                                    ?></h5>
                                 </div>
                             </div>
                             <hr class="m-0">
-                            <a class="dropdown-item" href="profile.html"> <i class="me-2" data-feather="user"></i> My
+                            <a class="dropdown-item" href="profile.php"> <i class="me-2" data-feather="user"></i> My
                                 Profile</a>
-                            <!-- <a class="dropdown-item" href="generalsettings.html"><i class="me-2" data-feather="settings"></i>Settings</a> -->
                             <hr class="m-0">
-                            <a class="dropdown-item logout pb-0" href="index.html"><img
+                            <a class="dropdown-item logout pb-0" href="logout.php"><img
                                     src="assets/img/icons/log-out.svg" class="me-2" alt="img">Logout</a>
                         </div>
                     </div>
                 </li>
             </ul>
-
-
             <div class="dropdown mobile-user-menu">
                 <a href="javascript:void(0);" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"
                     aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
                 <div class="dropdown-menu dropdown-menu-right">
-                    <a class="dropdown-item" href="profile.html">My Profile</a>
-                    <!-- <a class="dropdown-item" href="generalsettings.html">Settings</a> -->
-                    <a class="dropdown-item" href="signin.html">Logout</a>
+                    <a class="dropdown-item" href="profile.php">My Profile</a>
+                    <a class="dropdown-item" href="logout.php">Logout</a>
                 </div>
             </div>
-
         </div>
 
 
@@ -171,51 +166,9 @@ if (isset($_POST['add'])) {
                 <div id="sidebar-menu" class="sidebar-menu">
                     <ul>
                         <li class="active">
-                            <a href="dashboard.html"><img src="assets/img/icons/dashboard.svg" alt="img"><span>
+                            <a href="dashboard.php"><img src="assets/img/icons/dashboard.svg" alt="img"><span>
                                     Dashboard</span> </a>
                         </li>
-                        <li class="submenu">
-                            <a href="javascript:void(0);"><img src="assets/img/icons/product.svg" alt="img"><span>
-                                    Books</span> <span class="menu-arrow"></span></a>
-                            <ul>
-                                <li><a href="productlist.html">Book List</a></li>
-                                <li><a href="addproduct.html">Add Book</a></li>
-                            </ul>
-                        </li>
-
-                        <li class="submenu">
-                            <a href="javascript:void(0);"><img src="assets/img/icons/purchase1.svg" alt="img"><span>
-                                    Purchase</span> <span class="menu-arrow"></span></a>
-                            <ul>
-                                <li><a href="purchaselist.html">Purchase List</a></li>
-                                <li><a href="addpurchase.html">Add Purchase</a></li>
-
-                            </ul>
-                        </li>
-
-
-                        <li class="submenu">
-                            <a href="javascript:void(0);"><img src="assets/img/icons/users1.svg" alt="img"><span>
-                                    Supplier</span> <span class="menu-arrow"></span></a>
-                            <ul>
-
-                                <li><a href="supplierlist.html">Supplier List</a></li>
-                                <li><a href="addsupplier.html">Add Supplier </a></li>
-                            </ul>
-                        </li>
-
-                        <li class="submenu">
-                            <a href="javascript:void(0);"><img src="assets/img/icons/users1.svg" alt="img"><span>
-                                    Users</span> <span class="menu-arrow"></span></a>
-                            <ul>
-                                <li><a href="newuser.html">New User </a></li>
-                                <li><a href="userlists.html">User List</a></li>
-
-                            </ul>
-                        </li>
-
-                    </ul>
-                    </li>
                     </ul>
                 </div>
             </div>
@@ -225,11 +178,14 @@ if (isset($_POST['add'])) {
             <div class="content">
                 <div class="page-header">
                     <div class="page-title">
-                        <h4>User Management</h4>
-                        <h6>Add/Update User</h6>
+                        <h4>Staff Management</h4>
+                        <h6>Add Staff</h6>
                     </div>
-                </div>
+                    <div class="page-btn">
+                        <a href="staff_view.php" class="btn btn-added">Back</a>
+                    </div>
 
+                </div>
                 <div class="card">
                     <div class="card-body">
                         <div class="row">
@@ -300,6 +256,7 @@ if (isset($_POST['add'])) {
                                             foreach ($gml as $row) {
                                                 echo "<option value='" . $row['STAFFID'] . "'>" . $row['STAFFID'] . " " . $row['FULLNAME'] . "</option>";
                                             }
+                                            echo "<option value=''>None</option>";
                                         }
                                         echo "</select>";
 
@@ -322,7 +279,7 @@ if (isset($_POST['add'])) {
                                 </div>
 
                                 <div class="col-lg-12">
-                                    <input type="submit" name="add" value="add"
+                                    <input type="submit" name="add" value="Add"
                                         class="btn btn-submit me-2"></input>
                                     <a href="staff_view.php" class="btn btn-cancel">Cancel</a>
                                 </div>

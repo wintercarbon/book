@@ -253,6 +253,73 @@ class Staff extends Connection
         return $row['NEXTVAL'];
     }
 
+    // updateStaffEmailPhone($staffid, $email, $phone)
+    public function updateStaffEmailPhone($staffid, $email, $phone)
+    {
+        $sql = "UPDATE STAFF SET EMAIL = :email, PHONE_NUMBER = :phone WHERE STAFFID = :staffid";
+        $stmt = oci_parse($this->conn, $sql);
+        oci_bind_by_name($stmt, ':staffid', $staffid);
+        oci_bind_by_name($stmt, ':email', $email);
+        oci_bind_by_name($stmt, ':phone', $phone);
+        $execresult = oci_execute($stmt);
+        if($execresult) {
+            $result = oci_commit($this->conn);
+            oci_close($this->conn);
+            return $result;
+        } else {
+            $e = oci_error($this->conn);
+            //trigger_error(htmlentities($e['message'], ENT_QUOTES), E_USER_ERROR);
+            oci_rollback($this->conn);
+            oci_close($this->conn);
+            return false;
+        }
+    }
+
+
+    // updateStaffPassword
+    public function updateStaffPassword($staffid, $password)
+    {
+        $sql = "UPDATE STAFF SET PASSWORD = :password WHERE STAFFID = :staffid";
+        $stmt = oci_parse($this->conn, $sql);
+        oci_bind_by_name($stmt, ':staffid', $staffid);
+        oci_bind_by_name($stmt, ':password', $password);
+        $execresult = oci_execute($stmt);
+        if($execresult) {
+            $result = oci_commit($this->conn);
+            oci_close($this->conn);
+            return $result;
+        } else {
+            $e = oci_error($this->conn);
+            //trigger_error(htmlentities($e['message'], ENT_QUOTES), E_USER_ERROR);
+            oci_rollback($this->conn);
+            oci_close($this->conn);
+            return false;
+        }
+    }
+    
+    public function ceheckPassword($staffid, $password)
+    {
+
+        // use password verify
+        $sql = "SELECT PASSWORD FROM STAFF WHERE STAFFID = :staffid";
+        $stmt = oci_parse($this->conn, $sql);
+        oci_bind_by_name($stmt, ':staffid', $staffid);
+        oci_execute($stmt);
+        $row = oci_fetch_array($stmt, OCI_ASSOC);
+        if ($row) {
+            if (password_verify($password, $row['PASSWORD'])) {
+                //echo 'success';
+                return true;
+            } else {
+                //echo 'idk';
+                return false;
+            }
+        } else {
+            return false;
+        }
+
+    }
+
 }
 
 class Inventory extends Connection

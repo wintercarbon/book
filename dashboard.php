@@ -62,7 +62,6 @@ if ($staffpos == 'Manager') {
     <div class="main-wrapper">
 
         <div class="header">
-
             <div class="header-left active">
                 <a href="dashboard.php" class="logo">
                     <img src="assets/img/logos.png" alt="">
@@ -70,9 +69,7 @@ if ($staffpos == 'Manager') {
                 <a href="dashboard.php" class="logo-small">
                     <img src="assets/img/logos.png" alt="">
                 </a>
-
             </div>
-
             <a id="mobile_btn" class="mobile_btn" href="#sidebar">
                 <span class="bar-icon">
                     <span></span>
@@ -80,9 +77,7 @@ if ($staffpos == 'Manager') {
                     <span></span>
                 </span>
             </a>
-
             <ul class="nav user-menu">
-
                 <li class="nav-item dropdown has-arrow main-drop">
                     <a href="javascript:void(0);" class="dropdown-toggle nav-link userset" data-bs-toggle="dropdown">
                         <span class="user-img"><img src="assets/img/luffy.png" alt="">
@@ -91,7 +86,6 @@ if ($staffpos == 'Manager') {
                     <div class="dropdown-menu menu-drop-user">
                         <div class="profilename">
                             <div class="profileset">
-                                <!-- <span class="user-img"><img src="assets/img/profiles/avator1.jpg" alt=""> -->
                                 <span class="status online"></span></span>
                                 <div class="profilesets">
                                     <h6>
@@ -107,7 +101,6 @@ if ($staffpos == 'Manager') {
                             <hr class="m-0">
                             <a class="dropdown-item" href="profile.php"> <i class="me-2" data-feather="user"></i> My
                                 Profile</a>
-                            <!-- <a class="dropdown-item" href="generalsettings.php"><i class="me-2" data-feather="settings"></i>Settings</a> -->
                             <hr class="m-0">
                             <a class="dropdown-item logout pb-0" href="logout.php"><img
                                     src="assets/img/icons/log-out.svg" class="me-2" alt="img">Logout</a>
@@ -115,18 +108,14 @@ if ($staffpos == 'Manager') {
                     </div>
                 </li>
             </ul>
-
-
             <div class="dropdown mobile-user-menu">
                 <a href="javascript:void(0);" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"
                     aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
                 <div class="dropdown-menu dropdown-menu-right">
                     <a class="dropdown-item" href="profile.php">My Profile</a>
-                    <!-- <a class="dropdown-item" href="generalsettings.php">Settings</a> -->
                     <a class="dropdown-item" href="logout.php">Logout</a>
                 </div>
             </div>
-
         </div>
 
 
@@ -138,47 +127,6 @@ if ($staffpos == 'Manager') {
                             <a href="dashboard.php"><img src="assets/img/icons/dashboard.svg" alt="img"><span>
                                     Dashboard</span> </a>
                         </li>
-                        <li class="submenu">
-                            <a href="javascript:void(0);"><img src="assets/img/icons/product.svg" alt="img"><span>
-                                    Books</span> <span class="menu-arrow"></span></a>
-                            <ul>
-                                <li><a href="book_view.php">Book List</a></li>
-                                <li><a href="addproduct.php">Add Book</a></li>
-                            </ul>
-                        </li>
-
-                        <li class="submenu">
-                            <a href="javascript:void(0);"><img src="assets/img/icons/purchase1.svg" alt="img"><span>
-                                    Purchase</span> <span class="menu-arrow"></span></a>
-                            <ul>
-                                <li><a href="purchaselist.php">Purchase List</a></li>
-                                <li><a href="addpurchase.php">Add Purchase</a></li>
-
-                            </ul>
-                        </li>
-
-
-                        <li class="submenu">
-                            <a href="javascript:void(0);"><img src="assets/img/icons/users1.svg" alt="img"><span>
-                                    Supplier</span> <span class="menu-arrow"></span></a>
-                            <ul>
-
-                                <li><a href="supplierlist.php">Supplier List</a></li>
-                                <li><a href="addsupplier.php">Add Supplier </a></li>
-                            </ul>
-                        </li>
-
-                        <li class="submenu">
-                            <a href="javascript:void(0);"><img src="assets/img/icons/users1.svg" alt="img"><span>
-                                    Users</span> <span class="menu-arrow"></span></a>
-                            <ul>
-                                <li><a href="newuser.php">New User </a></li>
-                                <li><a href="userlists.php">User List</a></li>
-                            </ul>
-                        </li>
-
-                    </ul>
-                    </li>
                     </ul>
                 </div>
             </div>
@@ -194,14 +142,14 @@ if ($staffpos == 'Manager') {
                                     <?php
                                     // get total staff
                                     $staff = new Staff();
-                                     $totalStaff = $staff->getTotalStaff();
+                                    $totalStaff = $staff->getTotalStaff();
                                     echo $totalStaff;
                                     ?>
                                 </h4>
                                 <h5>Staff</h5>
                                 <?php
                                 // check is manager
-                                if($isManager) {
+                                if ($isManager) {
                                     echo '<a href="staff_view.php" class="btn btn-primary">Manage Staff</a>';
                                 } else {
                                     // view staff
@@ -217,16 +165,18 @@ if ($staffpos == 'Manager') {
                     <div class="col-lg-3 col-sm-6 col-12 d-flex">
                         <div class="dash-count das3">
                             <div class="dash-counts">
-                                <h4><?php
-                                // get total supplier
-                                $supplier = new Supplier();
-                                $totalSupplier = $supplier->getTotalSupplier();
-                                echo $totalSupplier;
-                                ?></h4>
+                                <h4>
+                                    <?php
+                                    // get total supplier
+                                    $supplier = new Supplier();
+                                    $totalSupplier = $supplier->getTotalSupplier();
+                                    echo $totalSupplier;
+                                    ?>
+                                </h4>
                                 <h5>Suppliers</h5>
                                 <?php
                                 // check is manager
-                                if($isManager) {
+                                if ($isManager) {
                                     echo '<a href="supplier_view.php" class="btn btn-primary">Manage Suppliers</a>';
                                 } else {
                                     // view staff

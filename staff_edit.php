@@ -29,9 +29,9 @@ if ($staffpos == 'Manager') {
 }
 
 // check not manager go to dashboard
-//if (!$isManager) {
-//    header('Location: dashboard.php');
-//}
+if (!$isManager) {
+    header('Location: dashboard.php');
+}
 
 ?>
 <?php
@@ -45,7 +45,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update'])) {
     $pposition = $_POST['position'];
     $pemail = $_POST['email'];
     $paddress = $_POST['address'];
-    $psupervisor_id = $_POST['supervisor_id'];
+    if(isset($_POST['supervisor_id'])) {
+        $psupervisor_id = $_POST['supervisor_id'];
+    } else {
+        $psupervisor_id = null;
+    }
 
     if ($result = $staff->updateStaff($pstaffid, $pfirstname, $plastname, $pphonenumber, $pemail, $paddress, $pposition, $psalary, $psupervisor_id)) {
         echo "<script>alert('Staff update successfully!');</script>";
@@ -137,18 +141,15 @@ if (!is_null($detail)) {
 
     <div class="main-wrapper">
 
-        <div class="header">
-
+    <div class="header">
             <div class="header-left active">
-                <a href="dashboard.html" class="logo">
+                <a href="dashboard.php" class="logo">
                     <img src="assets/img/logos.png" alt="">
                 </a>
-                <a href="dashboard.html" class="logo-small">
+                <a href="dashboard.php" class="logo-small">
                     <img src="assets/img/logos.png" alt="">
                 </a>
-
             </div>
-
             <a id="mobile_btn" class="mobile_btn" href="#sidebar">
                 <span class="bar-icon">
                     <span></span>
@@ -156,9 +157,7 @@ if (!is_null($detail)) {
                     <span></span>
                 </span>
             </a>
-
             <ul class="nav user-menu">
-
                 <li class="nav-item dropdown has-arrow main-drop">
                     <a href="javascript:void(0);" class="dropdown-toggle nav-link userset" data-bs-toggle="dropdown">
                         <span class="user-img"><img src="assets/img/luffy.png" alt="">
@@ -167,36 +166,36 @@ if (!is_null($detail)) {
                     <div class="dropdown-menu menu-drop-user">
                         <div class="profilename">
                             <div class="profileset">
-                                <!-- <span class="user-img"><img src="assets/img/profiles/avator1.jpg" alt=""> -->
                                 <span class="status online"></span></span>
                                 <div class="profilesets">
-                                    <h6>D. Luffy</h6>
-                                    <h5>Admin</h5>
+                                    <h6>
+                                        <?php
+                                        echo $staffname;
+                                        ?>
+                                    </h6>
+                                    <h5><?php
+                                    echo $staffpos;
+                                    ?></h5>
                                 </div>
                             </div>
                             <hr class="m-0">
-                            <a class="dropdown-item" href="profile.html"> <i class="me-2" data-feather="user"></i> My
+                            <a class="dropdown-item" href="profile.php"> <i class="me-2" data-feather="user"></i> My
                                 Profile</a>
-                            <!-- <a class="dropdown-item" href="generalsettings.html"><i class="me-2" data-feather="settings"></i>Settings</a> -->
                             <hr class="m-0">
-                            <a class="dropdown-item logout pb-0" href="index.html"><img
+                            <a class="dropdown-item logout pb-0" href="logout.php"><img
                                     src="assets/img/icons/log-out.svg" class="me-2" alt="img">Logout</a>
                         </div>
                     </div>
                 </li>
             </ul>
-
-
             <div class="dropdown mobile-user-menu">
                 <a href="javascript:void(0);" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"
                     aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
                 <div class="dropdown-menu dropdown-menu-right">
-                    <a class="dropdown-item" href="profile.html">My Profile</a>
-                    <!-- <a class="dropdown-item" href="generalsettings.html">Settings</a> -->
-                    <a class="dropdown-item" href="signin.html">Logout</a>
+                    <a class="dropdown-item" href="profile.php">My Profile</a>
+                    <a class="dropdown-item" href="logout.php">Logout</a>
                 </div>
             </div>
-
         </div>
 
 
@@ -208,48 +207,6 @@ if (!is_null($detail)) {
                             <a href="dashboard.php"><img src="assets/img/icons/dashboard.svg" alt="img"><span>
                                     Dashboard</span> </a>
                         </li>
-                        <li class="submenu">
-                            <a href="javascript:void(0);"><img src="assets/img/icons/product.svg" alt="img"><span>
-                                    Books</span> <span class="menu-arrow"></span></a>
-                            <ul>
-                                <li><a href="productlist.php">Book List</a></li>
-                                <li><a href="addproduct.php">Add Book</a></li>
-                            </ul>
-                        </li>
-
-                        <li class="submenu">
-                            <a href="javascript:void(0);"><img src="assets/img/icons/purchase1.svg" alt="img"><span>
-                                    Purchase</span> <span class="menu-arrow"></span></a>
-                            <ul>
-                                <li><a href="purchaselist.php">Purchase List</a></li>
-                                <li><a href="addpurchase.php">Add Purchase</a></li>
-
-                            </ul>
-                        </li>
-
-
-                        <li class="submenu">
-                            <a href="javascript:void(0);"><img src="assets/img/icons/users1.svg" alt="img"><span>
-                                    Supplier</span> <span class="menu-arrow"></span></a>
-                            <ul>
-
-                                <li><a href="supplierlist.php">Supplier List</a></li>
-                                <li><a href="addsupplier.php">Add Supplier </a></li>
-                            </ul>
-                        </li>
-
-                        <li class="submenu">
-                            <a href="javascript:void(0);"><img src="assets/img/icons/users1.svg" alt="img"><span>
-                                    Users</span> <span class="menu-arrow"></span></a>
-                            <ul>
-                                <li><a href="newuser.php">New User </a></li>
-                                <li><a href="userlists.php">User List</a></li>
-
-                            </ul>
-                        </li>
-
-                    </ul>
-                    </li>
                     </ul>
                 </div>
             </div>
@@ -259,8 +216,8 @@ if (!is_null($detail)) {
             <div class="content">
                 <div class="page-header">
                     <div class="page-title">
-                        <h4>User Management</h4>
-                        <h6>Edit/Update User</h6>
+                        <h4>Staff Management</h4>
+                        <h6>Edit/Update Staff</h6>
                     </div>
                 </div>
 
@@ -307,18 +264,18 @@ if (!is_null($detail)) {
                                         <label>Position</label>
                                         <?php
                                         if ($detail_position == 'Manager') {
+                                            echo "<input type='text' name='position' value='Manager' hidden>";
                                             echo "<select class='select' disabled>";
+                                            echo "<option selected>Manager</option>";
                                         } else {
                                             echo "<select name='position' class='select'>";
-                                        }
-                                        ?>
-                                        <?php
-                                        if ($detail_position == "Staff") {
-                                            echo "<option selected>Staff</option>";
-                                            echo "<option>Manager</option>";
-                                        } else {
-                                            echo "<option>Staff</option>";
-                                            echo "<option selected>Manager</option>";
+                                            if ($detail_position == "Staff") {
+                                                echo "<option selected>Staff</option>";
+                                                echo "<option>Manager</option>";
+                                            } else {
+                                                echo "<option>Staff</option>";
+                                                echo "<option selected>Manager</option>";
+                                            }
                                         }
                                         ?>
                                         </select>
@@ -339,6 +296,7 @@ if (!is_null($detail)) {
                                                     }
                                                 }
                                             }
+                                            echo "<option value='' Selected>None</option>";
                                             echo "</select>";
                                         }
                                         
@@ -354,7 +312,7 @@ if (!is_null($detail)) {
                                 </div>
 
                                 <div class="col-lg-12">
-                                    <input type="submit" name="update" value="update" class="btn btn-submit me-2">
+                                    <input type="submit" name="update" value="Update" class="btn btn-submit me-2">
                                     <?php
                                     echo "<a href= 'staff_details.php?staffid=$detail_staffid' class= 'btn btn-primary'>Cancel</a>";
                                     ?>
@@ -368,7 +326,9 @@ if (!is_null($detail)) {
 
                                 <?php
 
-                                if ($detail_position !== "Manager") {
+                                if ($detail_position == "Manager" && $detail_supervisor_id == "N/A") {
+                                    echo "<input type='submit' name='delete' value='Delete' class='btn btn-danger' disabled>";
+                                } else {
                                     echo "<input type='submit' name='delete' value='Delete' class='btn btn-danger'>";
                                 }
 
