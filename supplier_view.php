@@ -247,9 +247,9 @@ $supplier = new Supplier();
                                     <th>Contact Person</th>
                                     <th>Phone</th>
                                         <?php
-                                        if($isManager) {
+                                        //if($isManager) {
                                             echo "<th>Action</th>";
-                                        }
+                                        //}
                                         ?>
                                 </tr>
                             </thead>
@@ -264,9 +264,9 @@ $supplier = new Supplier();
                                         echo "<td>".$details['SUPPLIER_ADDRESS']."</td>";
                                         echo "<td>".$details['CONTACT_PERSON']."</td>";
                                         echo "<td>".$details['PHONE_NUMBER']."</td>";
-                                        if ($isManager) {
-                                            echo "<td><a href='editsupplier.php?id=".$details['SUPPLIER_ID']."'><img src='assets/img/icons/edit.svg' alt='img'></a><a href='deletesupplier.php?id=".$details['SUPPLIER_ID']."'><img src='assets/img/icons/delete.svg' alt='img'></a></td>";
-                                        }
+                                        //if ($isManager) {
+                                            echo "<td><a href='supplier_edit.php?supplier_id=".$details['SUPPLIER_ID']."'><img src='assets/img/icons/edit.svg' alt='img'></a><a href='deletesupplier.php?supplier_id=".$details['SUPPLIER_ID']."'><img src='assets/img/icons/delete.svg' alt='img'></a></td>";
+                                        //}
                                         echo "</tr>";
                                     }
                                 }

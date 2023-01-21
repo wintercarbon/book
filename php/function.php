@@ -469,6 +469,19 @@ class Supplier extends Connection {
         }
         return $data;
     }
+
+    // get supplier detail based on supplier_id
+    public function getSupplierDetail($supplier_id) {
+        $data = array();
+        $sql = "SELECT * FROM Supplier WHERE supplier_id = :supplier_id";
+        $stmt = oci_parse($this->conn, $sql);
+        oci_bind_by_name($stmt, ':supplier_id', $supplier_id);
+        oci_execute($stmt);
+        while ($row = oci_fetch_array($stmt, OCI_ASSOC)) {
+            $data[] = $row;
+        }
+        return $data;
+    }
 }
 
 class INV_BOOK extends Connection {

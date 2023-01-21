@@ -6,7 +6,7 @@ session_start();
 $supplier_id = $_GET['supplier_id'];
 
 // check if user is logged in
-if (!isset($_SESSION['staffid'])) {
+if(!isset($_SESSION['staffid'])){
     header('Location: index.php');
 }
 
@@ -16,73 +16,16 @@ $staffid = $_SESSION['staffid'];
 
 $inventory = new Inventory();
 $staff = new Staff();
-$book = new BOOK();
+$book = new Book();
 $supplier = new Supplier();
 $staffname = $staff->getStaffFullName($staffid);
 $staffpos = $staff->getStaffPosition($staffid);
 
 // is manager
-if ($staffpos == 'Manager') {
+if($staffpos = 'Manager'){
     $isManager = true;
-} else {
+}else {
     $isManager = false;
-}
-
-// check not manager go to dashboard
-if (!$isManager) {
-    header('Location: dashboard.php');
-}
-
-?>
-<?php
-
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update'])) {
-    $supplier_id = $_POST['supplier_id'];
-    $supplier_name = $_POST['supplier_name'];
-    $supplier_address = $_POST['supplier_address'];
-    $contact_person = $_POST['contact_person'];
-    $phone_number = $_POST['phone_number'];
-
-    if($result = $supplier->updateSupplier($supplier_id, $supplier_name, $supplier_address, $contact_person, $phone_number)) {
-        
-        echo "<script>alert('Supplier update successfully!');</script>";
-    } else {
-        echo "<script>alert('Supplier update failed!');</script>";
-    }
-}
-
-// delete
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete'])) {
-    $supplier_id = $_POST['supplier_id'];
-    if($result = $supplier->deleteSupplier($supplier_id)) {
-        echo "<script>alert('Supplier deleted successfully!');</script>";
-        echo '<script>window.location.href = "supplier_view.php"</script>';
-    } else {
-        echo "<script>alert('Supplier delete failed!');</script>";
-    }
-}
-?>
-
-<?php
-
-// 
-
-$supplier_id = $_GET['supplier_id'];
-
-$detail = $supplier->getSupplierDetailsForUpdate($supplier_id);
-$detail_supplier_id = "N/A";
-$detail_supplier_name = "N/A";
-$detail_suppplier_address = "N/A";
-$detail_contact_person= "N/A";
-$detail_phone_number = "N/A";
-
-if (!is_null($detail)) {
-    foreach ($detail as $details) {
-        $detail_supplier_id = $details['SUPPLIER_ID'];
-        $detail_supplier_name = $details['SUPPLIER_NAME'];
-        $detail_supplier_address = $details['SUPPLIER_ADDRESS'];
-        $detail_contact_person = $details['CONTACT_PERSON'];
-        $detail_phone_number = $details['PHONE_NUMBER'];
 }
 ?>
 
@@ -107,6 +50,8 @@ if (!is_null($detail)) {
 
     <link rel="stylesheet" href="assets/plugins/select2/css/select2.min.css">
 
+    <link rel="stylesheet" href="assets/plugins/owlcarousel/owl.carousel.min.css">
+
     <link rel="stylesheet" href="assets/css/dataTables.bootstrap4.min.css">
 
     <link rel="stylesheet" href="assets/plugins/fontawesome/css/fontawesome.min.css">
@@ -116,6 +61,10 @@ if (!is_null($detail)) {
 </head>
 
 <body>
+    <div id="global-loader">
+        <div class="whirly-loader"> </div>
+    </div>
+
     <div class="main-wrapper">
 
         <div class="header">
@@ -239,85 +188,103 @@ if (!is_null($detail)) {
             <div class="content">
                 <div class="page-header">
                     <div class="page-title">
-                        <h4>Supplier Edit</h4>
-                        <h6>Update Supplier</h6>
+                        <h4>Supplier Details</h4>
+                        <h6>Full details of supplier</h6>
                     </div>
                 </div>
 
-                <div class="card">
-                    <div class="card-body">
-                        <div class="row">
-                            <form class="my-3"
-                                action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]) . "?bookid=" . $bookid; ?>"
-                                method="POST">
-                                <div class="col-lg-3 col-sm-6 col-12">
-                                    <div class="form-group">
-                                        <input type="number" name="bookid" value="<?php echo $detail_bookid; ?>" hidden>
-                                        <label>Supplier ID</label>
-                                        <input type="number" value="<?php echo $detail_supplier_id; ?>" disabled>
-                                    </div>
-                                </div>
-                                <div class="col-lg-3 col-sm-6 col-12">
-                                    <div class="form-group">
-                                        <label>Supplier Name</label>
-                                        <input type="text" name="supplier_name" value="<?php echo $detail_supplier_name; ?>">
-                                    </div>
-                                </div>
-                                <div class="col-lg-3 col-sm-6 col-12">
-                                    <div class="form-group">
-                                        <label>Supplier Address</label>
-                                        <input type="text" name="supplier_address" value="<?php echo $detail_supplier_address; ?>">
-                                    </div>
-                                </div>
-                                <div class="col-lg-3 col-sm-6 col-12">
-                                    <div class="form-group">
-                                        <label>Contact Person</label>
-                                        <input type="text" name="contact_person" value="<?php echo $detail_contact_person; ?>">
-                                    </div>
-                                </div>
-                                <div class="col-lg-3 col-sm-6 col-12">
-                                    <div class="form-group">
-                                        <label>Phone Number</label>
-                                        <input type="number" name="phone_number"
-                                            value="<?php echo $detail_phone_number; ?>">
-                                    </div>
-                                </div>
-                                <div class="col-lg-3 col-sm-6 col-12">
-                                    <div class="form-group">
-                                        <label>Image URL</label>
-                                        <input type="text" name="book_image" value="<?php echo $detail_url; ?>">
-                                    </div>
-                                </div>
-                                <div class="col-lg-3 col-sm-6 col-12">
-                                    <div class="form-group">
-                                        <label>Supplier</label>
+                <div class="row">
+                    <div class="col-lg-8 col-sm-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="productdetails">
+                                    <?php
+                                    // b.bookid, b.isbn, b.book_name, b.book_author, b.book_price, b.publication_date, s.supplier_name, ib.quantity
+                                    $detail = $supplier->getSupplierDetail($supplier_id);
+                                    $detail_supplier_id = "N/A";
+                                    $detail_supplier_name = "N/A";
+                                    $detail_supplier_address = "N/A";
+                                    $detail_contact_person = "N/A";
+                                    $detail_phone_number = "N/A";
+                                    if (!is_null($detail)) {
+                                        foreach ($detail as $details) {
+                                            
+                                            $detail_supplier_id = $details['SUPPLIER_ID'];
+                                            $detail_supplier_name = $details['SUPPLIER_NAME'];
+                                            $detail_supplier_address = $details['SUPPLIER_ADDRESS'];
+                                            $detail_contact_person = $details['CONTACT_PERSON'];
+                                            $detail_phone_number = $details['PHONE_NUMBER'];
+                                        }
+
+                                    }
+                                    ?>
+                                    <ul class="product-bar">
+                                        <li>
+                                            <h4>Supplier ID</h4>
+                                            <?php
+                                            echo "<h6>$detail_supplier_id</h6>";
+                                            ?>
+                                        </li>
+                                        <li>
+                                            <h4>Supplier Name</h4>
+                                            <?php
+                                            echo "<h6>$detail_supplier_name</h6>";
+                                            ?>
+                                        </li>
+                                        <li>
+                                            <h4>Supplier Address</h4>
+                                            <?php
+                                            echo "<h6>$detail_supplier_address</h6>";
+                                            ?>
+                                        </li>
+                                        <li>
+                                            <h4>Contact Person</h4>
+                                            <?php
+                                            echo "<h6>$detail_contact_person</h6>";
+                                            ?>
+                                        </li>
+                                        <li>
+                                            <h4>Phone Number</h4>
+                                            <?php
+                                            echo "<h6>$detail_phone_number</h6>";
+                                            ?>
+                                        </li>
                                         <?php
-                                        $getAllSupplier = $supplier->getAllSupplierIDName();
-                                        if(!is_null($getAllSupplier)) {
-                                            echo "<select name='supplierid'>";
-                                            foreach($getAllSupplier as $getAllSuppliers) {
-                                                if($getAllSuppliers['SUPPLIER_ID'] == $detail_supplierid) {
-                                                    echo "<option value='" . $getAllSuppliers['SUPPLIER_ID'] . "' selected>" . $getAllSuppliers['SUPPLIER_NAME'] . "</option>";
-                                                } else {
-                                                    echo "<option value='" . $getAllSuppliers['SUPPLIER_ID'] . "'>" . $getAllSuppliers['SUPPLIER_NAME'] . "</option>";
-                                                }
-                                            }
-                                            echo "</select>";
+                                        if($isManager) {
+                                            echo "<li>";
+                                            echo "<h4>Action</h4>";
+                                            echo "<h6>";
+                                            // edit and delete button
+                                            echo "<a href='book_edit.php?bookid=$detail_bookid' class='btn btn-primary'>Edit</a>";
+                                            echo "<a href='book_delete.php?bookid=$detail_bookid' class='btn btn-danger'>Delete</a>";
+                                            echo "</h6>";
+                                            echo "</li>";
                                         }
                                         ?>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-sm-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="slider-product-details">
+                                    <div class="owl-carousel owl-theme product-slide">
+                                        <div class="slider-product">
+                                            <?php
+                                            echo "<img src='$detail_url' alt='N/A'>";
+                                            ?>
+                                        </div>
+                                        <div class="slider-product">
+                                            <?php
+                                            echo "<img src='$detail_url' alt='N/A'>";
+                                            ?>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="col-lg-12">
-                                    <input type="submit" name="update" value="update" class="btn btn-submit me-2">
-                                    <a href="book_view.php" class="btn btn-cancel">Cancel</a>
-                                </div>
+                            </div>
                         </div>
-                        </form>
-                        <form class="border-bottom" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]) . "?bookid=" . $bookid; ?>" method="POST" id="deleteForm" onsubmit="return confirm('Are you sure you want to delete the book?');">
-                            <input type="number" name="bookid" value="<?php echo $detail_bookid; ?>" hidden>
-                            <input type="hidden" name="delete" value="delete">
-                            <input type="submit" name="delete" value="Delete" class="btn btn-danger">
-                        </form>
                     </div>
                 </div>
 
@@ -332,15 +299,11 @@ if (!is_null($detail)) {
 
     <script src="assets/js/jquery.slimscroll.min.js"></script>
 
-    <script src="assets/js/jquery.dataTables.min.js"></script>
-    <script src="assets/js/dataTables.bootstrap4.min.js"></script>
-
     <script src="assets/js/bootstrap.bundle.min.js"></script>
 
-    <script src="assets/plugins/select2/js/select2.min.js"></script>
+    <script src="assets/plugins/owlcarousel/owl.carousel.min.js"></script>
 
-    <script src="assets/plugins/sweetalert/sweetalert2.all.min.js"></script>
-    <script src="assets/plugins/sweetalert/sweetalerts.min.js"></script>
+    <script src="assets/plugins/select2/js/select2.min.js"></script>
 
     <script src="assets/js/script.js"></script>
 </body>
