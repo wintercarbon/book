@@ -175,7 +175,7 @@ if ($staffpos == 'Manager') {
                                     if (!is_null($detail)) {
                                         foreach ($detail as $details) {
                                             if(isset($details['SUPERVISOR_ID'])) {
-                                                $supervisorName = $details['SUPERVISOR_ID'];
+                                                $supervisorName = $staff->getStaffFullName($details['SUPERVISOR_ID']);
                                             } else {
                                                 $supervisorName = "N/A";
                                             }
