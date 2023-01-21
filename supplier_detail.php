@@ -16,7 +16,8 @@ $staffid = $_SESSION['staffid'];
 
 $inventory = new Inventory();
 $staff = new Staff();
-$book = new Book();
+$supplier = new supplier();
+$supplier = new Supplier();
 $staffname = $staff->getStaffFullName($staffid);
 $staffpos = $staff->getStaffPosition($staffid);
 
@@ -39,7 +40,7 @@ if($staffpos = 'Manager'){
         content="admin, estimates, bootstrap, business, corporate, creative, invoice, html5, responsive, Projects">
     <meta name="author" content="Dreamguys - Bootstrap Admin Template">
     <meta name="robots" content="noindex, nofollow">
-    <title>Book Inventory Management System</title>
+    <title>supplier Inventory Management System</title>
 
     <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.png">
 
@@ -139,10 +140,10 @@ if($staffpos = 'Manager'){
                         </li>
                         <li class="submenu">
                             <a href="javascript:void(0);"><img src="assets/img/icons/product.svg" alt="img"><span>
-                                    Books</span> <span class="menu-arrow"></span></a>
+                                    suppliers</span> <span class="menu-arrow"></span></a>
                             <ul>
-                                <li><a href="productlist.php">Book List</a></li>
-                                <li><a href="addproduct.php">Add Book</a></li>
+                                <li><a href="productlist.php">supplier List</a></li>
+                                <li><a href="addproduct.php">Add supplier</a></li>
                             </ul>
                         </li>
 
@@ -198,8 +199,8 @@ if($staffpos = 'Manager'){
                             <div class="card-body">
                                 <div class="productdetails">
                                     <?php
-                                    // b.bookid, b.isbn, b.book_name, b.book_author, b.book_price, b.publication_date, s.supplier_name, ib.quantity
-                                    $detail = $supplier->getSupplierDetails($supplier_id);
+                                    // b.supplier_id, b.isbn, b.supplier_name, b.supplier_author, b.supplier_price, b.publication_date, s.supplier_name, ib.quantity
+                                    $detail = $supplier->getSupplierDetail($supplier_id);
                                     $detail_supplier_id = "N/A";
                                     $detail_supplier_name = "N/A";
                                     $detail_supplier_address = "N/A";
@@ -208,12 +209,6 @@ if($staffpos = 'Manager'){
                                     if (!is_null($detail)) {
                                         foreach ($detail as $details) {
                                             
-                                            if(isset($details['QUANTITY']) && !empty($details['QUANTITY'])) {
-                                                $detail_quantity = $details['QUANTITY'];
-                                            } else {
-                                                $detail_quantity = "N/A";
-                                            }
-
                                             $detail_supplier_id = $details['SUPPLIER_ID'];
                                             $detail_supplier_name = $details['SUPPLIER_NAME'];
                                             $detail_supplier_address = $details['SUPPLIER_ADDRESS'];
@@ -260,33 +255,12 @@ if($staffpos = 'Manager'){
                                             echo "<h4>Action</h4>";
                                             echo "<h6>";
                                             // edit and delete button
-                                            echo "<a href='book_edit.php?bookid=$detail_bookid' class='btn btn-primary'>Edit</a>";
-                                            echo "<a href='book_delete.php?bookid=$detail_bookid' class='btn btn-danger'>Delete</a>";
+                                            echo "<a href='supplier_edit.php?supplier_id=$detail_supplier_id' class='btn btn-primary'>Edit</a>";
                                             echo "</h6>";
                                             echo "</li>";
                                         }
                                         ?>
                                     </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-sm-12">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="slider-product-details">
-                                    <div class="owl-carousel owl-theme product-slide">
-                                        <div class="slider-product">
-                                            <?php
-                                            echo "<img src='$detail_url' alt='N/A'>";
-                                            ?>
-                                        </div>
-                                        <div class="slider-product">
-                                            <?php
-                                            echo "<img src='$detail_url' alt='N/A'>";
-                                            ?>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                         </div>

@@ -198,10 +198,10 @@ $supplier = new Supplier();
                     </div>
                     <div class="page-btn">
                         <?php
-                        if($isManager) {
-                            echo '<a href="addsupplier.php" class="btn btn-added"><img src="assets/img/icons/plus.svg"
+                        //if($isManager) {
+                            echo '<a href="supplier_add.php" class="btn btn-added"><img src="assets/img/icons/plus.svg"
                             alt="img">Add Supplier</a>';
-                        }
+                        //}
                         ?>
                     </div>
                 </div>
@@ -264,9 +264,12 @@ $supplier = new Supplier();
                                         echo "<td>".$details['SUPPLIER_ADDRESS']."</td>";
                                         echo "<td>".$details['CONTACT_PERSON']."</td>";
                                         echo "<td>".$details['PHONE_NUMBER']."</td>";
+                                        echo "<td>";
+                                        echo "<a href='supplier_detail.php?supplier_id=" . $details['SUPPLIER_ID'] . "'><img src='assets/img/icons/eye.svg' alt='img'></a>";
                                         //if ($isManager) {
-                                            echo "<td><a href='supplier_edit.php?supplier_id=".$details['SUPPLIER_ID']."'><img src='assets/img/icons/edit.svg' alt='img'></a><a href='deletesupplier.php?supplier_id=".$details['SUPPLIER_ID']."'><img src='assets/img/icons/delete.svg' alt='img'></a></td>";
+                                            echo "<a href='supplier_edit.php?supplier_id=".$details['SUPPLIER_ID']."'><img src='assets/img/icons/edit.svg' alt='img'></a>";
                                         //}
+                                        echo "</td>";
                                         echo "</tr>";
                                     }
                                 }

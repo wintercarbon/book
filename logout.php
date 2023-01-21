@@ -16,5 +16,3 @@ $connect->logout();
 exit;
 
 ?>
-
-?>

@@ -6,29 +6,56 @@ session_start();
 $supplier_id = $_GET['supplier_id'];
 
 // check if user is logged in
-if(!isset($_SESSION['staffid'])){
+if(!isset($_SESSION['Supplierid'])){
     header('Location: index.php');
 }
 
 include_once 'php/function.php';
 
-$staffid = $_SESSION['staffid'];
+$Supplierid = $_SESSION['Supplierid'];
 
 $inventory = new Inventory();
-$staff = new Staff();
-$book = new Book();
+$Supplier = new Supplier();
 $supplier = new Supplier();
-$staffname = $staff->getStaffFullName($staffid);
-$staffpos = $staff->getStaffPosition($staffid);
+$Suppliername = $Supplier->getSupplierFullName($Supplierid);
+$Supplierpos = $Supplier->getSupplierPosition($Supplierid);
 
 // is manager
-if($staffpos = 'Manager'){
+if($Supplierpos = 'Manager'){
     $isManager = true;
 }else {
     $isManager = false;
 }
 ?>
 
+<?php
+
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update'])) {
+    $supplier_id = $_POST['supplier_id'];
+    $supplier_name = $_POST['supplier_name'];
+    $supplier_address = $_POST['supplier_address'];
+    $contact_person = $_POST['contact_person'];
+    $supplier_phone = $_POST['phone_number'];
+
+    if ($r = $supplier->updateSupplier($supplier_id, $supplier_name, $supplier_address, $contact_person, $supplier_phone)) {
+        echo "<script>alert('Supplier updated successfully!')</script>";
+    } else {
+        echo "<script>alert('Supplier update failed!');</script>";    
+    }
+
+}
+
+// delete
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete'])) {
+    $supplier_id = $_POST['supplier_id'];
+    if ($result = $supplier->deleteSupplier($supplier_id)) {
+        echo "<script>alert('Supplier deleted successfully!');</script>";
+        echo '<script>window.location.href = "supplier_view.php"</script>';
+    } else {
+        echo "<script>alert('Supplier delete failed!');</script>";
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -40,7 +67,7 @@ if($staffpos = 'Manager'){
         content="admin, estimates, bootstrap, business, corporate, creative, invoice, html5, responsive, Projects">
     <meta name="author" content="Dreamguys - Bootstrap Admin Template">
     <meta name="robots" content="noindex, nofollow">
-    <title>Book Inventory Management System</title>
+    <title>supplier Inventory Management System</title>
 
     <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.png">
 
@@ -140,10 +167,10 @@ if($staffpos = 'Manager'){
                         </li>
                         <li class="submenu">
                             <a href="javascript:void(0);"><img src="assets/img/icons/product.svg" alt="img"><span>
-                                    Books</span> <span class="menu-arrow"></span></a>
+                                    suppliers</span> <span class="menu-arrow"></span></a>
                             <ul>
-                                <li><a href="productlist.php">Book List</a></li>
-                                <li><a href="addproduct.php">Add Book</a></li>
+                                <li><a href="productlist.php">supplier List</a></li>
+                                <li><a href="addproduct.php">Add supplier</a></li>
                             </ul>
                         </li>
 
@@ -199,7 +226,7 @@ if($staffpos = 'Manager'){
                             <div class="card-body">
                                 <div class="productdetails">
                                     <?php
-                                    // b.bookid, b.isbn, b.book_name, b.book_author, b.book_price, b.publication_date, s.supplier_name, ib.quantity
+                                    // b.supplier_id, b.isbn, b.supplier_name, b.supplier_author, b.supplier_price, b.publication_date, s.supplier_name, ib.quantity
                                     $detail = $supplier->getSupplierDetail($supplier_id);
                                     $detail_supplier_id = "N/A";
                                     $detail_supplier_name = "N/A";
@@ -218,70 +245,65 @@ if($staffpos = 'Manager'){
 
                                     }
                                     ?>
-                                    <ul class="product-bar">
-                                        <li>
-                                            <h4>Supplier ID</h4>
-                                            <?php
-                                            echo "<h6>$detail_supplier_id</h6>";
-                                            ?>
-                                        </li>
-                                        <li>
-                                            <h4>Supplier Name</h4>
-                                            <?php
-                                            echo "<h6>$detail_supplier_name</h6>";
-                                            ?>
-                                        </li>
-                                        <li>
-                                            <h4>Supplier Address</h4>
-                                            <?php
-                                            echo "<h6>$detail_supplier_address</h6>";
-                                            ?>
-                                        </li>
-                                        <li>
-                                            <h4>Contact Person</h4>
-                                            <?php
-                                            echo "<h6>$detail_contact_person</h6>";
-                                            ?>
-                                        </li>
-                                        <li>
-                                            <h4>Phone Number</h4>
-                                            <?php
-                                            echo "<h6>$detail_phone_number</h6>";
-                                            ?>
-                                        </li>
-                                        <?php
-                                        if($isManager) {
-                                            echo "<li>";
-                                            echo "<h4>Action</h4>";
-                                            echo "<h6>";
-                                            // edit and delete button
-                                            echo "<a href='book_edit.php?bookid=$detail_bookid' class='btn btn-primary'>Edit</a>";
-                                            echo "<a href='book_delete.php?bookid=$detail_bookid' class='btn btn-danger'>Delete</a>";
-                                            echo "</h6>";
-                                            echo "</li>";
-                                        }
-                                        ?>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-sm-12">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="slider-product-details">
-                                    <div class="owl-carousel owl-theme product-slide">
-                                        <div class="slider-product">
-                                            <?php
-                                            echo "<img src='$detail_url' alt='N/A'>";
-                                            ?>
-                                        </div>
-                                        <div class="slider-product">
-                                            <?php
-                                            echo "<img src='$detail_url' alt='N/A'>";
-                                            ?>
-                                        </div>
+                                    
+                            <form class="my-3"
+                                action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]) . "?supplier_id=" . $detail_supplier_id; ?>"
+                                method="POST">
+                                <div class="col-lg-3 col-sm-6 col-12">
+                                    <div class="form-group">
+                                        <input type="number" name="supplier_id" value="<?php echo $detail_supplier_id; ?>" hidden>
+                                        <label>Supplier ID</label>
+                                        <input type="number" value="<?php echo $detail_supplier_id; ?>" disabled>
                                     </div>
+                                </div>
+                                <div class="col-lg-3 col-sm-6 col-12">
+                                    <div class="form-group">
+                                        <label>Supplier Name</label>
+                                        <input type="text" name="supplier_name" value="<?php echo $detail_supplier_name; ?>">
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-sm-6 col-12">
+                                    <div class="form-group">
+                                        <label>Supplier Address</label>
+                                        <input type="text" name="supplier_address" value="<?php echo $detail_supplier_address; ?>" >
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-sm-6 col-12">
+                                    <div class="form-group">
+                                        <label>Contact Person</label>
+                                        <input type="text" name="contact_person" value="<?php echo $detail_contact_person; ?>" >
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-sm-6 col-12">
+                                    <div class="form-group">
+                                        <label>Phone Number</label>
+                                        <input type="text" name="phone_number" value="<?php echo $detail_phone_number; ?>">
+                                    </div>
+                                </div>
+
+
+                                <div class="col-lg-12">
+                                    <input type="submit" name="update" value="update" class="btn btn-submit me-2">
+                                    <?php
+                                    echo "<a href='supplier_detail.php?supplier_id=" . $detail_supplier_id . "' class='btn btn-cancel'>Cancel</a>";
+                                    ?>
+                                </div>
+                        </div>
+                        </form>
+                            <form class="border-bottom"
+                                action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]) . "?supplier_id=" . $detail_supplier_id; ?>"
+                                method="POST" id="deleteForm"
+                                onsubmit="return confirm('Are you sure you want to delete the supplier?');">
+
+                                <?php
+
+                                //if (!$isManager) {
+                                    echo "<input type='submit' name='delete' value='Delete' class='btn btn-danger'>";
+                                //}
+
+                                ?>
+                                <input type="number" name="supplier_id" value="<?php echo $detail_supplier_id; ?>" hidden>
+                            </form>
                                 </div>
                             </div>
                         </div>

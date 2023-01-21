@@ -14,7 +14,7 @@ $staffid = $_SESSION['staffid'];
 
 $inventory = new Inventory();
 $staff = new Staff();
-$book = new BOOK();
+$supplier = new supplier();
 $supplier = new Supplier();
 $staffname = $staff->getStaffFullName($staffid);
 $staffpos = $staff->getStaffPosition($staffid);
@@ -28,7 +28,7 @@ if ($staffpos == 'Manager') {
 
 // check not manager go to dashboard
 if (!$isManager) {
-    header('Location: dashboard.php');
+   // header('Location: dashboard.php');
 }
 
 ?>
@@ -41,11 +41,11 @@ if (isset($_POST['add'])) {
     $contact_person = $_POST['contact_person'];
     $phone_number = $_POST['phone_number'];
 
-    $result = $book->insertBook($supplier_name, $supplier_address, $contact_person, $phone_number);
+    $result = $supplier->insertSupplier($supplier_name, $supplier_address, $contact_person, $phone_number);
     if ($result) {
-        $newsupplier = $supplier->getBookIdSeq();
-        echo "'<script>alert('Add supplier successfully  ')</script>";
-        echo '<script>window.location.href = "supplier_detail.php?bookid='. $newbook . '"</script>';
+        $newsupplier = $supplier->getSupplierIDSeq();
+        echo "'<script>alert('Add supplier successfully ')</script>";
+        echo '<script>window.location.href = "supplier_detail.php?supplier_id='. $newsupplier . '"</script>';
     } else {
         echo '<script>alert("Add supplier failed")</script>';
         echo '<script>window.location.href = "supplier_add.php"</script>';
@@ -64,7 +64,7 @@ if (isset($_POST['add'])) {
         content="admin, estimates, bootstrap, business, corporate, creative, invoice, html5, responsive, Projects">
     <meta name="author" content="Dreamguys - Bootstrap Admin Template">
     <meta name="robots" content="noindex, nofollow">
-    <title>Book Inventory Management System</title>
+    <title>supplier Inventory Management System</title>
 
     <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.png">
 
@@ -158,10 +158,10 @@ if (isset($_POST['add'])) {
                         </li>
                         <li class="submenu">
                             <a href="javascript:void(0);"><img src="assets/img/icons/product.svg" alt="img"><span>
-                                    Books</span> <span class="menu-arrow"></span></a>
+                                    suppliers</span> <span class="menu-arrow"></span></a>
                             <ul>
-                                <li><a href="productlist.php">Book List</a></li>
-                                <li><a href="addproduct.php">Add Book</a></li>
+                                <li><a href="productlist.php">supplier List</a></li>
+                                <li><a href="addproduct.php">Add supplier</a></li>
                             </ul>
                         </li>
 
@@ -242,28 +242,9 @@ if (isset($_POST['add'])) {
                                             value="">
                                     </div>
                                 </div>
-                                <div class="col-lg-3 col-sm-6 col-12">
-                                    <div class="form-group">
-                                        <label>Supplier</label>
-                                        <?php
-                                        $getAllSupplier = $supplier->getAllSupplierIDName();
-                                        if(!is_null($getAllSupplier)) {
-                                            echo "<select name='supplierid'>";
-                                            foreach($getAllSupplier as $getAllSuppliers) {
-                                                if($getAllSuppliers['SUPPLIER_ID'] == $detail_supplierid) {
-                                                    echo "<option value='" . $getAllSuppliers['SUPPLIER_ID'] . "' selected>" . $getAllSuppliers['SUPPLIER_NAME'] . "</option>";
-                                                } else {
-                                                    echo "<option value='" . $getAllSuppliers['SUPPLIER_ID'] . "'>" . $getAllSuppliers['SUPPLIER_NAME'] . "</option>";
-                                                }
-                                            }
-                                            echo "</select>";
-                                        }
-                                        ?>
-                                    </div>
-                                </div>
                                 <div class="col-lg-12">
-                                    <input type="submit" name="add" value="add" class="btn btn-submit me-2">
-                                    <a href="book_view.php" class="btn btn-cancel">Cancel</a>
+                                    <input type="submit" name="add" value="Add" class="btn btn-submit me-2">
+                                    <a href="supplier_view.php" class="btn btn-cancel">Cancel</a>
                                 </div>
                         </div>
                         </form>

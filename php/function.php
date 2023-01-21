@@ -482,6 +482,79 @@ class Supplier extends Connection {
         }
         return $data;
     }
+
+    // update supplier detail
+    public function updateSupplier($supplier_id, $supplier_name, $supplier_address, $contact_person, $phone_number) {
+        $sql = "UPDATE Supplier SET supplier_name = :supplier_name, supplier_address = :supplier_address, contact_person = :contact_person, phone_number = :phone_number WHERE supplier_id = :supplier_id";
+        $stmt = oci_parse($this->conn, $sql);
+        oci_bind_by_name($stmt, ':supplier_id', $supplier_id);
+        oci_bind_by_name($stmt, ':supplier_name', $supplier_name);
+        oci_bind_by_name($stmt, ':supplier_address', $supplier_address);
+        oci_bind_by_name($stmt, ':phone_number', $phone_number);
+        oci_bind_by_name($stmt, ':contact_person', $contact_person);
+        $execresult = oci_execute($stmt);
+        if($execresult) {
+            $result = oci_commit($this->conn);
+            oci_close($this->conn);
+            return $result;
+        } else {
+            $e = oci_error($this->conn);
+            //trigger_error(htmlentities($e['message'], ENT_QUOTES), E_USER_ERROR);
+            oci_rollback($this->conn);
+            oci_close($this->conn);
+            return false;
+        }
+    }
+
+    // insert supplier detail
+    public function insertSupplier($supplier_name, $supplier_address, $contact_person, $phone_number) {
+        $sql = "INSERT INTO Supplier (supplier_id, supplier_name, supplier_address, contact_person, phone_number) VALUES (supplier_id_seq.nextval, :supplier_name, :supplier_address, :contact_person, :phone_number)";
+        $stmt = oci_parse($this->conn, $sql);
+        oci_bind_by_name($stmt, ':supplier_name', $supplier_name);
+        oci_bind_by_name($stmt, ':supplier_address', $supplier_address);
+        oci_bind_by_name($stmt, ':phone_number', $phone_number);
+        oci_bind_by_name($stmt, ':contact_person', $contact_person);
+        $execresult = oci_execute($stmt);
+        if($execresult) {
+            $result = oci_commit($this->conn);
+            oci_close($this->conn);
+            return $result;
+        } else {
+            $e = oci_error($this->conn);
+            //trigger_error(htmlentities($e['message'], ENT_QUOTES), E_USER_ERROR);
+            oci_rollback($this->conn);
+            oci_close($this->conn);
+            return false;
+        }
+    }
+
+    // get supplier id seq currentval
+    public function getSupplierIDSeq() {
+        $sql = "SELECT supplier_id_seq.currval AS supplier_id FROM dual";
+        $stmt = oci_parse($this->conn, $sql);
+        oci_execute($stmt);
+        $row = oci_fetch_array($stmt, OCI_ASSOC);
+        return $row['SUPPLIER_ID'];
+    }
+
+    // delete supplier
+    public function deleteSupplier($supplier_id) {
+        $sql = "DELETE FROM Supplier WHERE supplier_id = :supplier_id";
+        $stmt = oci_parse($this->conn, $sql);
+        oci_bind_by_name($stmt, ':supplier_id', $supplier_id);
+        $execresult = oci_execute($stmt);
+        if($execresult) {
+            $result = oci_commit($this->conn);
+            oci_close($this->conn);
+            return $result;
+        } else {
+            $e = oci_error($this->conn);
+            //trigger_error(htmlentities($e['message'], ENT_QUOTES), E_USER_ERROR);
+            oci_rollback($this->conn);
+            oci_close($this->conn);
+            return false;
+        }
+    }
 }
 
 class INV_BOOK extends Connection {
