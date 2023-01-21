@@ -3,7 +3,7 @@
 session_start();
 
 // get staffid from url
-$staffid = $_GET['staffid'];
+$gstaffid = $_GET['staffid'];
 
 //check if user is logged in
 if (!isset($_SESSION['staffid'])) {
@@ -202,8 +202,7 @@ if ($staffpos == 'Manager') {
                                 <div class="productdetails">
                                     <?php
 
-                                    $detail = $staff->getStaffDetails($staffid);
-                                    var_dump($detail);
+                                    $detail = $staff->getStaffDetails($gstaffid);
                                     $detail_staffid = "N/A";
                                     $detail_first_name = "N/A";
                                     $detail_last_name = "N/A";
@@ -212,12 +211,17 @@ if ($staffpos == 'Manager') {
                                     $detail_hire_date = "N/A";
                                     $detail_password = "N/A";
                                     $detail_postion = "N/A";
-                                    $detail_supervisor_id = "N/A";
+                                    $supervisorName = "N/A";
                                     $detail_email = "N/A";
                                     $detail_address = "N/A";
 
                                     if (!is_null($detail)) {
                                         foreach ($detail as $details) {
+                                            if(isset($details['SUPERVISOR_ID'])) {
+                                                $supervisorName = $details['SUPERVISOR_ID'];
+                                            } else {
+                                                $supervisorName = "N/A";
+                                            }
                                             $detail_staffid = $details['STAFFID'];
                                             $detail_first_name = $details['FIRST_NAME'];
                                             $detail_last_name = $details['LAST_NAME'];
@@ -225,7 +229,6 @@ if ($staffpos == 'Manager') {
                                             $detail_salary = $details['SALARY'];
                                             $detail_hire_date = $details['HIRE_DATE'];
                                             $detail_postion = $details['POSITION'];
-                                            $detail_supervisor_id = $details['SUPERVISOR_ID'];
                                             $detail_email = $details['EMAIL'];
                                             $detail_address = $details['ADDRESS'];
                                         }
@@ -283,9 +286,9 @@ if ($staffpos == 'Manager') {
                                             ?>
                                         </li>
                                         <li>
-                                            <h4>Supervisor ID</h4>
+                                            <h4>Supervisor Name</h4>
                                             <?php
-                                            echo "<h6>$detail_supervisor_id</h6>";
+                                            echo "<h6>$supervisorName</h6>";
                                             ?>
                                         </li>
                                         <li>
@@ -295,17 +298,17 @@ if ($staffpos == 'Manager') {
                                             ?>
                                         </li>
                                         <?php
-                                        if ($isManager) {
+                                        //if ($isManager) {
                                             echo "<li>";
                                             echo "<h4>Action</h4>";
                                             echo "<h6>";
 
                                             //edit and delete button
                                             echo "<a href= 'staff_edit.php?staffid=$detail_staffid' class= 'btn btn-primary'>Edit</a>";
-                                            echo "<a href= 'staff_delete.php?staffid=$detail_staffid' class= 'btn btn-danger'>Delete</a>";
+                                            //echo "<a href= 'staff_delete.php?staffid=$detail_staffid' class= 'btn btn-danger'>Delete</a>";
                                             echo "</h6>";
                                             echo "</li>";
-                                        }
+                                        //}
                                         ?>
                                     </ul>
                                 </div>

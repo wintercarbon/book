@@ -13,7 +13,7 @@ class Connection
         $this->conn = oci_connect($this->user, $this->password, $this->host);
         if (!$this->conn) {
             $e = oci_error();
-            trigger_error(htmlentities($e['message'], ENT_QUOTES), E_USER_ERROR);
+            //trigger_error(htmlentities($e['message'], ENT_QUOTES), E_USER_ERROR);
         }
     }
 }
@@ -142,6 +142,117 @@ class Staff extends Connection
         return $row['FULLNAME'];
     }
 
+    // get list of staff have position manager
+    public function getManagerList()
+    {
+        $data = array();
+        $sql = "SELECT STAFFID, FIRST_NAME || ' ' || LAST_NAME AS FULLNAME FROM STAFF WHERE POSITION = 'Manager'";
+        $stmt = oci_parse($this->conn, $sql);
+        oci_execute($stmt);
+        while ($row = oci_fetch_array($stmt, OCI_ASSOC)) {
+            $data[] = $row;
+        }
+        return $data;
+    }
+
+    // update staff
+    public function updateStaff($staffid, $firstname, $lastname, $phonenumber, $email, $address, $position, $salary, $supervisorid)
+    {
+        $sql = "UPDATE STAFF SET FIRST_NAME = :firstname, LAST_NAME = :lastname, PHONE_NUMBER = :phonenumber, EMAIL = :email, ADDRESS = :address, POSITION = :position, SALARY = :salary, SUPERVISOR_ID = :supervisorid WHERE STAFFID = :staffid";
+        $stmt = oci_parse($this->conn, $sql);
+        oci_bind_by_name($stmt, ':staffid', $staffid);
+        oci_bind_by_name($stmt, ':firstname', $firstname);
+        oci_bind_by_name($stmt, ':lastname', $lastname);
+        oci_bind_by_name($stmt, ':phonenumber', $phonenumber);
+        oci_bind_by_name($stmt, ':email', $email);
+        oci_bind_by_name($stmt, ':address', $address);
+        oci_bind_by_name($stmt, ':position', $position);
+        oci_bind_by_name($stmt, ':salary', $salary);
+        oci_bind_by_name($stmt, ':supervisorid', $supervisorid);
+        $execresult = oci_execute($stmt);
+        if($execresult) {
+            $result = oci_commit($this->conn);
+            oci_close($this->conn);
+            return $result;
+        } else {
+            $e = oci_error($this->conn);
+            //trigger_error(htmlentities($e['message'], ENT_QUOTES), E_USER_ERROR);
+            oci_rollback($this->conn);
+            oci_close($this->conn);
+            return false;
+        }
+    } 
+    // delete staff
+    public function deleteStaff($staffid)
+    {
+        $sql = "DELETE FROM STAFF WHERE STAFFID = :staffid";
+        $stmt = oci_parse($this->conn, $sql);
+        oci_bind_by_name($stmt, ':staffid', $staffid);
+        $execresult = oci_execute($stmt);
+        if($execresult) {
+            $result = oci_commit($this->conn);
+            oci_close($this->conn);
+            return $result;
+        } else {
+            $e = oci_error($this->conn);
+            //trigger_error(htmlentities($e['message'], ENT_QUOTES), E_USER_ERROR);
+            oci_rollback($this->conn);
+            oci_close($this->conn);
+            return false;
+        }
+    }
+
+    // insert staff
+    public function insertStaff($firstname, $lastname, $phonenumber, $hiredate, $email, $address, $position, $salary, $supervisorid, $password)
+    {
+        $salary = floatval($salary);
+        $supervisorid = intval($supervisorid);
+        $sql = "INSERT INTO STAFF (STAFFID, FIRST_NAME, LAST_NAME, PHONE_NUMBER, HIRE_DATE, EMAIL, ADDRESS, POSITION, SALARY, SUPERVISOR_ID, PASSWORD) VALUES (STAFF_ID_SEQ.nextval, :firstname, :lastname, :phonenumber, TO_DATE(:hiredate), :email, :address, :position, TO_NUMBER(:salary, 9999999999.99), TO_NUMBER(:supervisorid, 99999), :password)";
+        $stmt = oci_parse($this->conn, $sql);
+        oci_bind_by_name($stmt, ':firstname', $firstname);
+        oci_bind_by_name($stmt, ':lastname', $lastname);
+        oci_bind_by_name($stmt, ':phonenumber', $phonenumber);
+        oci_bind_by_name($stmt, ':hiredate', $hiredate);
+        oci_bind_by_name($stmt, ':email', $email);
+        oci_bind_by_name($stmt, ':address', $address);
+        oci_bind_by_name($stmt, ':position', $position);
+        oci_bind_by_name($stmt, ':salary', $salary);
+        oci_bind_by_name($stmt, ':supervisorid', $supervisorid);
+        oci_bind_by_name($stmt, ':password', $password);
+        $execresult = oci_execute($stmt);
+        if($execresult) {
+            $result = oci_commit($this->conn);
+            oci_close($this->conn);
+            return $result;
+        } else {
+            $e = oci_error($this->conn);
+            //trigger_error(htmlentities($e['message'], ENT_QUOTES), E_USER_ERROR);
+            oci_rollback($this->conn);
+            oci_close($this->conn);
+            return false;
+        }
+    }
+
+    // get staff id seq
+    public function getStaffIdSeq()
+    {
+        $sql = "SELECT STAFF_ID_SEQ.CURRVAL FROM DUAL";
+        $stmt = oci_parse($this->conn, $sql);
+        oci_execute($stmt);
+        $row = oci_fetch_array($stmt, OCI_ASSOC);
+        return $row['CURRVAL'];
+    }
+
+    // cehck staff id next seq
+    public function checkStaffIdNextSeq()
+    {
+        $sql = "SELECT STAFF_ID_SEQ.NEXTVAL FROM DUAL";
+        $stmt = oci_parse($this->conn, $sql);
+        oci_execute($stmt);
+        $row = oci_fetch_array($stmt, OCI_ASSOC);
+        return $row['NEXTVAL'];
+    }
+
 }
 
 class Inventory extends Connection
@@ -265,7 +376,7 @@ class Inventory extends Connection
             return $result;
         } else {
             $e = oci_error($this->conn);
-            trigger_error(htmlentities($e['message'], ENT_QUOTES), E_USER_ERROR);
+            //trigger_error(htmlentities($e['message'], ENT_QUOTES), E_USER_ERROR);
             oci_rollback($this->conn);
             oci_close($this->conn);
             return false;
@@ -284,7 +395,7 @@ class Inventory extends Connection
             return $result;
         } else {
             $e = oci_error($this->conn);
-            trigger_error(htmlentities($e['message'], ENT_QUOTES), E_USER_ERROR);
+            //trigger_error(htmlentities($e['message'], ENT_QUOTES), E_USER_ERROR);
             oci_rollback($this->conn);
             oci_close($this->conn);
             return false;
@@ -307,7 +418,7 @@ class Inventory extends Connection
             return $result;
         } else {
             $e = oci_error($this->conn);
-            trigger_error(htmlentities($e['message'], ENT_QUOTES), E_USER_ERROR);
+            //trigger_error(htmlentities($e['message'], ENT_QUOTES), E_USER_ERROR);
             oci_rollback($this->conn);
             oci_close($this->conn);
             return false;
@@ -443,7 +554,7 @@ class BOOK extends Connection {
         $stmt = oci_parse($this->conn, $sql);
         if (!$stmt) {
             $e = oci_error($this->conn);
-            trigger_error(htmlentities($e['message'], ENT_QUOTES), E_USER_ERROR);
+            //trigger_error(htmlentities($e['message'], ENT_QUOTES), E_USER_ERROR);
         }
         oci_bind_by_name($stmt, ':bookid', $bookid);
         oci_bind_by_name($stmt, ':isbn', $isbn);
@@ -460,7 +571,7 @@ class BOOK extends Connection {
             return $result;
         } else {
             $e = oci_error($this->conn);
-            trigger_error(htmlentities($e['message'], ENT_QUOTES), E_USER_ERROR);
+            //trigger_error(htmlentities($e['message'], ENT_QUOTES), E_USER_ERROR);
             oci_rollback($this->conn);
             oci_close($this->conn);
             return false;
@@ -472,7 +583,7 @@ class BOOK extends Connection {
         $stmt = oci_parse($this->conn, $sql);
         if (!$stmt) {
             $e = oci_error($this->conn);
-            trigger_error(htmlentities($e['message'], ENT_QUOTES), E_USER_ERROR);
+            //trigger_error(htmlentities($e['message'], ENT_QUOTES), E_USER_ERROR);
         }
         oci_bind_by_name($stmt, ':bookid', $bookid);
         $execresult = oci_execute($stmt);
@@ -482,7 +593,7 @@ class BOOK extends Connection {
             return $result;
         } else {
             $e = oci_error($this->conn);
-            trigger_error(htmlentities($e['message'], ENT_QUOTES), E_USER_ERROR);
+            //trigger_error(htmlentities($e['message'], ENT_QUOTES), E_USER_ERROR);
             oci_rollback($this->conn);
             oci_close($this->conn);
             return false;
@@ -495,7 +606,7 @@ class BOOK extends Connection {
         $stmt = oci_parse($this->conn, $sql);
         if (!$stmt) {
             $e = oci_error($this->conn);
-            trigger_error(htmlentities($e['message'], ENT_QUOTES), E_USER_ERROR);
+            //trigger_error(htmlentities($e['message'], ENT_QUOTES), E_USER_ERROR);
         }
         oci_bind_by_name($stmt, ':isbn', $isbn);
         oci_bind_by_name($stmt, ':book_name', $book_name);
@@ -511,7 +622,7 @@ class BOOK extends Connection {
             return $result;
         } else {
             $e = oci_error($this->conn);
-            trigger_error(htmlentities($e['message'], ENT_QUOTES), E_USER_ERROR);
+            //trigger_error(htmlentities($e['message'], ENT_QUOTES), E_USER_ERROR);
             oci_rollback($this->conn);
             oci_close($this->conn);
             return false;

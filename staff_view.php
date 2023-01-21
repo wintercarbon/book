@@ -194,10 +194,10 @@ if ($staffpos == 'Manager') {
                     </div>
                     <div class="page-btn">
                         <?php
-                        if($isManager) {
+                        //if($isManager) {
                             echo '<a href="staff_add.php" class="btn btn-added"><img src="assets/img/icons/plus.svg" alt="img"
                                     class="me-1">Add New Staff</a>';
-                        }
+                        //}
                         ?>
                     </div>
                 </div>
