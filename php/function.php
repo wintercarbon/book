@@ -3,6 +3,7 @@
 class Connection
 {
 
+
     public $user = "PROJECT502";
     public $host = "LOCALHOST";
     public $password = "SYSTEM";
