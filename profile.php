@@ -131,7 +131,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_password'])) {
             <ul class="nav user-menu">
                 <li class="nav-item dropdown has-arrow main-drop">
                     <a href="javascript:void(0);" class="dropdown-toggle nav-link userset" data-bs-toggle="dropdown">
-                        <span class="user-img"><img src="assets/img/luffy.png" alt="">
+                        <span class="user-img"><img src="assets/img/hehe.png" alt="">
                             <span class="status online"></span></span>
                     </a>
                     <div class="dropdown-menu menu-drop-user">
@@ -211,7 +211,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_password'])) {
                 if (!is_null($detail)) {
                     foreach ($detail as $details) {
                         if (isset($details['SUPERVISOR_ID'])) {
-                            $supervisorName = $details['SUPERVISOR_ID'];
+                            $supervisorName = $staff->getStaffFullName($details['SUPERVISOR_ID']);
                         } else {
                             $supervisorName = "N/A";
                         }
@@ -242,6 +242,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_password'])) {
                                 <div class="form-group">
                                     <label>Last Name</label>
                                     <input type="text" value="<?php echo $detail_last_name; ?>" disabled>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-sm-12">
+                                <div class="form-group">
+                                    <label>Supervisor Name</label>
+                                    <input type="text" value="<?php echo $supervisorName; ?>" disabled>
                                 </div>
                             </div>
                             <p>---</p>

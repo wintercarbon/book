@@ -50,6 +50,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update'])) {
     } else {
         $psupervisor_id = null;
     }
+    // if set bonus
+    if(isset($_POST['bonus'])) {
+        $pbonus = $_POST['bonus'];
+        // update manager
+        $staff->updateManager($pstaffid, $pbonus);
+    } else {
+        $pbonus = null;
+    }
+
+    // f
 
     if ($result = $staff->updateStaff($pstaffid, $pfirstname, $plastname, $pphonenumber, $pemail, $paddress, $pposition, $psalary, $psupervisor_id)) {
         echo "<script>alert('Staff update successfully!');</script>";
@@ -61,7 +71,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update'])) {
 // delete
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete'])) {
     $staffid = $_POST['staffid'];
+    $mposition = $_POST['mposition'];
     if ($result = $staff->deleteStaff($staffid)) {
+        if($mposition == "Manager") {
+            $staff->deleteManager($staffid);
+        }
         echo "<script>alert('Staff deleted successfully!');</script>";
         echo '<script>window.location.href = "staff_view.php"</script>';
     } else {
@@ -99,6 +113,11 @@ if (!is_null($detail)) {
             $detail_supervisor_id = $details['SUPERVISOR_ID'];
         } else {
             $detail_supervisor_id = "N/A";
+        }
+        if(isset($details['BONUS'])) {
+            $detail_bonus = $details['BONUS'];
+        } else {
+            $detail_bonus = "N/A";
         }
     }
 
@@ -254,6 +273,15 @@ if (!is_null($detail)) {
                                         <label>Salary</label>
                                         <input type="number" name="salary" value="<?php echo $detail_salary; ?>">
                                     </div>
+                                    <?php
+                                    // if $detail_position = Manager show bonus
+                                    if ($detail_position == 'Manager') {
+                                        echo "<div class='form-group'>";
+                                        echo "<label>Bonus</label>";
+                                        echo "<input type='number' name='bonus' value='$detail_bonus'>";
+                                        echo "</div>";
+                                    }
+                                    ?>
                                 </div>
                                 <div class="col-lg-3 col-sm-6 col-12">
                                     <div class="form-group">
@@ -271,7 +299,7 @@ if (!is_null($detail)) {
                                             echo "<select name='position' class='select'>";
                                             if ($detail_position == "Staff") {
                                                 echo "<option selected>Staff</option>";
-                                                echo "<option>Manager</option>";
+                                                //echo "<option>Manager</option>";
                                             } else {
                                                 echo "<option>Staff</option>";
                                                 echo "<option selected>Manager</option>";
@@ -294,9 +322,11 @@ if (!is_null($detail)) {
                                                     } else {
                                                         echo "<option value='" . $row['STAFFID'] . "'>" . $row['STAFFID'] . " " . $row['FULLNAME'] . "</option>";
                                                     }
+                                                } else {
+                                                    echo "<option value='' Selected>None</option>";
                                                 }
                                             }
-                                            echo "<option value='' Selected>None</option>";
+                                            //echo "<option value='' Selected>None</option>";
                                             echo "</select>";
                                         }
                                         
@@ -334,6 +364,7 @@ if (!is_null($detail)) {
 
                                 ?>
                                 <input type="number" name="staffid" value="<?php echo $detail_staffid; ?>" hidden>
+                                <input type="text" name="mposition" value="<?php echo $detail_position; ?>" hidden>
                             </form>
                         </div>
                     </div>
