@@ -45,18 +45,32 @@ if (isset($_POST['add'])) {
 
     $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
     $position = $_POST['position'];
-    $supervisor_id = $_POST['supervisor_id'];
+    //$supervisor_id = $_POST['supervisor_id'];
     $email = $_POST['email'];
     $address = $_POST['address'];
 
     $checksalary = is_numeric($salary);
     $checksupervisor = is_numeric($supervisor_id);
 
+    if(isset($_POST['supervisor_id'])) {
+        $psupervisor_id = $_POST['supervisor_id'];
+    } else {
+        $psupervisor_id = null;
+    }
+
+
 
 
     $result = $staff->insertStaff($first_name, $last_name, $phone_number, $hire_date, $email, $address, $position, floatval($salary), $supervisor_id, $password);
     if ($result) {
         $newstaff = $staff->getStaffIdSeq();
+        // check position is manager
+        if ($position == 'Manager') {
+            // insert into manager
+            $newbonus = 0;
+            $staff->insertManager($newstaff, $newbonus);
+    
+        }
         echo "'<script>alert('Staff added successfully')</script>";
         echo '<script>window.location.href = "staff_details.php?staffid=' . $newstaff . '"</script>';
     } else {

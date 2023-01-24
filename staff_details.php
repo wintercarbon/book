@@ -171,6 +171,7 @@ if ($staffpos == 'Manager') {
                                     $supervisorName = "N/A";
                                     $detail_email = "N/A";
                                     $detail_address = "N/A";
+                                    $detail_bonus = "N/A";
 
                                     if (!is_null($detail)) {
                                         foreach ($detail as $details) {
@@ -188,6 +189,11 @@ if ($staffpos == 'Manager') {
                                             $detail_postion = $details['POSITION'];
                                             $detail_email = $details['EMAIL'];
                                             $detail_address = $details['ADDRESS'];
+                                            if(isset($details['BONUS'])) {
+                                                $detail_bonus = $details['BONUS'];
+                                            } else {
+                                                $detail_bonus = "N/A";
+                                            }
                                         }
 
                                     }
@@ -254,6 +260,11 @@ if ($staffpos == 'Manager') {
                                             echo "<h6>$detail_salary</h6>";
                                             ?>
                                         </li>
+                                        <li>
+                                            <h4>Bonus</h4>
+                                            <?php
+                                            echo "<h6>$detail_bonus</h6>";
+                                            ?>
                                         <?php
                                         if ($isManager) {
                                             echo "<li>";

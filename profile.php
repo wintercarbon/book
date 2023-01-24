@@ -211,7 +211,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_password'])) {
                 if (!is_null($detail)) {
                     foreach ($detail as $details) {
                         if (isset($details['SUPERVISOR_ID'])) {
-                            $supervisorName = $details['SUPERVISOR_ID'];
+                            $supervisorName = $staff->getStaffFullName($details['SUPERVISOR_ID']);
                         } else {
                             $supervisorName = "N/A";
                         }
@@ -242,6 +242,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_password'])) {
                                 <div class="form-group">
                                     <label>Last Name</label>
                                     <input type="text" value="<?php echo $detail_last_name; ?>" disabled>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-sm-12">
+                                <div class="form-group">
+                                    <label>Supervisor Name</label>
+                                    <input type="text" value="<?php echo $supervisorName; ?>" disabled>
                                 </div>
                             </div>
                             <p>---</p>
