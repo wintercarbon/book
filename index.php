@@ -37,9 +37,9 @@ if (isset($_POST['login'])) {
         content="admin, estimates, bootstrap, business, corporate, creative, invoice, html5, responsive, Projects">
     <meta name="author" content="Dreamguys - Bootstrap Admin Template">
     <meta name="robots" content="noindex, nofollow">
-    <title>Login - Book Inventory | Login </title>
+    <title> Book Inventory | Login </title>
 
-    <link rel="shortcut icon" type="image/x-icon" href="assets/img/logos.png">
+    <link rel="shortcut icon" type="image/x-icon" href="assets/img/bookx.jpg">
 
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
 
@@ -57,10 +57,10 @@ if (isset($_POST['login'])) {
                 <div class="login-content">
                     <div class="login-userset">
                         <div class="login-logo">
-                            <img src="assets/img/logos.png" alt="img">
+                            <img src="assets/img/bookx.jpg" alt="img">
                         </div>
                         <div class="login-userheading">
-                            <h3>Sign In</h3>
+                            <h3>Log In</h3>
                             <h4>Please login to your account</h4>
                         </div>
                             <span id="msg" style="color:red;">

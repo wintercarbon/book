@@ -40,9 +40,9 @@ if ($staffpos == 'Manager') {
         content="admin, estimates, bootstrap, business, corporate, creative, invoice, html5, responsive, Projects">
     <meta name="author" content="Dreamguys - Bootstrap Admin Template">
     <meta name="robots" content="noindex, nofollow">
-    <title>Book Inventory Management System</title>
+    <title>Book | Details</title>
 
-    <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.png">
+    <link rel="shortcut icon" type="image/x-icon" href="assets/img/bookx.jpg">
 
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
 
@@ -70,10 +70,10 @@ if ($staffpos == 'Manager') {
     <div class="header">
             <div class="header-left active">
                 <a href="dashboard.php" class="logo">
-                    <img src="assets/img/logos.png" alt="">
+                    <img src="assets/img/bookx.jpg" alt="">
                 </a>
                 <a href="dashboard.php" class="logo-small">
-                    <img src="assets/img/logos.png" alt="">
+                    <img src="assets/img/bookx.jpg" alt="">
                 </a>
             </div>
             <a id="mobile_btn" class="mobile_btn" href="#sidebar">
@@ -86,7 +86,7 @@ if ($staffpos == 'Manager') {
             <ul class="nav user-menu">
                 <li class="nav-item dropdown has-arrow main-drop">
                     <a href="javascript:void(0);" class="dropdown-toggle nav-link userset" data-bs-toggle="dropdown">
-                        <span class="user-img"><img src="assets/img/luffy.png" alt="">
+                        <span class="user-img"><img src="assets/img/hehe.png" alt="">
                             <span class="status online"></span></span>
                     </a>
                     <div class="dropdown-menu menu-drop-user">
@@ -265,11 +265,7 @@ if ($staffpos == 'Manager') {
                                             echo "<img src='$detail_url' alt='N/A'>";
                                             ?>
                                         </div>
-                                        <div class="slider-product">
-                                            <?php
-                                            echo "<img src='$detail_url' alt='N/A'>";
-                                            ?>
-                                        </div>
+                                        
                                     </div>
                                 </div>
                             </div>

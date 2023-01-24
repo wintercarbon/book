@@ -3,6 +3,7 @@
 class Connection
 {
 
+
     public $user = "PROJECT502";
     public $host = "LOCALHOST";
     public $password = "SYSTEM";
@@ -74,8 +75,9 @@ class Staff extends Connection
     // get staff details
     public function getStaffDetails($staffid)
     {
+        // SELECT s.staffid, s.first_name, s.last_name, s.phone_number, s.salary, s.hire_date, s.position, s.supervisor_id, s.email, s.address, m.bonus FROM Staff s LEFT JOIN Manager m ON s.staffid = m.staffid WHERE s.staffid = 
         $data = array();
-        $sql = "SELECT STAFFID, FIRST_NAME, LAST_NAME, PHONE_NUMBER, SALARY, HIRE_DATE, POSITION, EMAIL, ADDRESS, SUPERVISOR_ID FROM STAFF WHERE STAFFID = :staffid";
+        $sql = "SELECT s.staffid, s.first_name, s.last_name, s.phone_number, s.salary, s.hire_date, s.position, s.supervisor_id, s.email, s.address, m.bonus FROM Staff s LEFT JOIN Manager m ON s.staffid = m.staffid WHERE s.staffid = :staffid";
         $stmt = oci_parse($this->conn, $sql);
         oci_bind_by_name($stmt, ':staffid', $staffid);
         oci_execute($stmt);
@@ -122,7 +124,8 @@ class Staff extends Connection
     public function getAllStaff()
     {
         $data = array();
-        $sql = "SELECT STAFFID, FIRST_NAME, LAST_NAME, PHONE_NUMBER, HIRE_DATE, EMAIL, POSITION, SUPERVISOR_ID FROM STAFF";
+        // SELECT s.staffid, s.first_name, s.last_name, s.phone_number, s.salary, s.hire_date, s.position, s.supervisor_id, s.email, s.address, m.bonus FROM Staff s LEFT JOIN Manager m ON s.staffid = m.staffid;
+        $sql = "SELECT s.staffid, s.first_name, s.last_name, s.phone_number, s.salary, s.hire_date, s.position, s.supervisor_id, s.email, s.address, m.bonus FROM Staff s LEFT JOIN Manager m ON s.staffid = m.staffid";
         $stmt = oci_parse($this->conn, $sql);
         oci_execute($stmt);
         while ($row = oci_fetch_array($stmt, OCI_ASSOC)) {
@@ -182,6 +185,69 @@ class Staff extends Connection
             return false;
         }
     } 
+
+    // insert manager
+    public function insertManager($staffid, $bonus)
+    {
+        $sql = "INSERT INTO MANAGER (STAFFID, BONUS) VALUES (:staffid, :bonus)";
+        $stmt = oci_parse($this->conn, $sql);
+        oci_bind_by_name($stmt, ':staffid', $staffid);
+        oci_bind_by_name($stmt, ':bonus', $bonus);
+        $execresult = oci_execute($stmt);
+        if($execresult) {
+            $result = oci_commit($this->conn);
+            oci_close($this->conn);
+            return $result;
+        } else {
+            $e = oci_error($this->conn);
+            //trigger_error(htmlentities($e['message'], ENT_QUOTES), E_USER_ERROR);
+            oci_rollback($this->conn);
+            oci_close($this->conn);
+            return false;
+        }
+    }
+
+    // update Manager
+    public function updateManager($staffid, $bonus)
+    {
+        $sql = "UPDATE MANAGER SET BONUS = :bonus WHERE STAFFID = :staffid";
+        $stmt = oci_parse($this->conn, $sql);
+        oci_bind_by_name($stmt, ':staffid', $staffid);
+        oci_bind_by_name($stmt, ':bonus', $bonus);
+        $execresult = oci_execute($stmt);
+        if($execresult) {
+            $result = oci_commit($this->conn);
+            oci_close($this->conn);
+            return $result;
+        } else {
+            $e = oci_error($this->conn);
+            //trigger_error(htmlentities($e['message'], ENT_QUOTES), E_USER_ERROR);
+            oci_rollback($this->conn);
+            oci_close($this->conn);
+            return false;
+        }
+    }
+
+    // delete manager
+    public function deleteManager($staffid)
+    {
+        $sql = "DELETE FROM MANAGER WHERE STAFFID = :staffid";
+        $stmt = oci_parse($this->conn, $sql);
+        oci_bind_by_name($stmt, ':staffid', $staffid);
+        $execresult = oci_execute($stmt);
+        if($execresult) {
+            $result = oci_commit($this->conn);
+            oci_close($this->conn);
+            return $result;
+        } else {
+            $e = oci_error($this->conn);
+            //trigger_error(htmlentities($e['message'], ENT_QUOTES), E_USER_ERROR);
+            oci_rollback($this->conn);
+            oci_close($this->conn);
+            return false;
+        }
+    }
+
     // delete staff
     public function deleteStaff($staffid)
     {
